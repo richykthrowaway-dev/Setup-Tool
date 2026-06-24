@@ -20,12 +20,12 @@ jobs:
 
       - name: Deploy (production)
         if: github.ref == 'refs/heads/main'
-        run: npx vercel --token=${{ secrets.VERCEL_TOKEN }} --yes --prod
+        run: npx vercel --token=${{ secrets.VERCEL_TOKEN }} --yes --prod --name=iracing-setup-tool
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
 
       - name: Deploy (preview)
         if: github.ref != 'refs/heads/main'
-        run: npx vercel --token=${{ secrets.VERCEL_TOKEN }} --yes
+        run: npx vercel --token=${{ secrets.VERCEL_TOKEN }} --yes --name=iracing-setup-tool
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
