@@ -2,8 +2,13 @@
 
 import { CarSchema, Setup } from '@/types/setup';
 import CategoryPanel from './CategoryPanel';
+import ChangesPanel from './ChangesPanel';
+import HandlingGuide from './HandlingGuide';
 import { createSetup, downloadSetup, saveSetup } from '@/lib/setup';
-import { useState, useEffect, useCallback } from 'react';
+import { computeChanges } from '@/lib/analysis';
+import { useState, useEffect, useCallback, useMemo } from 'react';
+
+type Tab = 'tune' | 'changes' | 'handling';
 
 interface Props {
   schema: CarSchema;
@@ -18,10 +23,28 @@ export default function SetupBuilder({ schema, existingSetup, onSaved, onBack }:
     return createSetup(schema.id, `New ${schema.name} Setup`, schema);
   });
   const [savedBanner, setSavedBanner] = useState(false);
+  const [tab, setTab] = useState<Tab>('tune');
 
   useEffect(() => {
     if (existingSetup) setSetup(existingSetup);
   }, [existingSetup]);
+
+  const changeCount = useMemo(
+    () => computeChanges(schema, setup.values).length,
+    [schema, setup.values]
+  );
+
+  const handleResetAll = useCallback(() => {
+    setSetup((prev) => {
+      const values = { ...prev.values };
+      for (const category of schema.categories) {
+        for (const param of category.parameters) {
+          values[param.id] = param.defaultValue;
+        }
+      }
+      return { ...prev, values, updatedAt: Date.now() };
+    });
+  }, [schema]);
 
   const handleChange = useCallback((id: string, value: number | string | boolean) => {
     setSetup((prev) => ({
@@ -52,6 +75,7 @@ export default function SetupBuilder({ schema, existingSetup, onSaved, onBack }:
 
   return (
     <div className="min-h-screen bg-gray-950 text-gray-100">
+      {/* Header */}
       <div className="sticky top-0 z-10 bg-gray-950 border-b border-gray-800 px-4 py-3">
         <div className="max-w-4xl mx-auto flex items-center gap-4">
           {onBack && (
@@ -90,9 +114,46 @@ export default function SetupBuilder({ schema, existingSetup, onSaved, onBack }:
             </button>
           </div>
         </div>
+
+        {/* Tabs */}
+        <div className="max-w-4xl mx-auto flex items-center gap-1 mt-3 -mb-px">
+          {([
+            ['tune', 'Tune'],
+            ['changes', `Changes${changeCount ? ` (${changeCount})` : ''}`],
+            ['handling', 'Handling Guide'],
+          ] as [Tab, string][]).map(([id, label]) => (
+            <button
+              key={id}
+              onClick={() => setTab(id)}
+              className={`px-4 py-2 text-sm font-medium rounded-t-lg border-b-2 transition-colors ${
+                tab === id
+                  ? 'border-blue-500 text-gray-100'
+                  : 'border-transparent text-gray-500 hover:text-gray-300'
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
+        {tab === 'changes' && (
+          <ChangesPanel
+            schema={schema}
+            values={setup.values}
+            onReset={handleChange}
+            onResetAll={handleResetAll}
+          />
+        )}
+
+        {tab === 'handling' && (
+          <HandlingGuide schema={schema} values={setup.values} onChange={handleChange} />
+        )}
+
+        {tab === 'tune' && (
+          <>
+        {/* Metadata */}
         <div className="bg-gray-900 border border-gray-700 rounded-xl p-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="block text-xs text-gray-500 mb-1 uppercase tracking-wide">Track</label>
@@ -116,6 +177,7 @@ export default function SetupBuilder({ schema, existingSetup, onSaved, onBack }:
           </div>
         </div>
 
+        {/* Categories */}
         {schema.categories.map((category) => (
           <CategoryPanel
             key={category.id}
@@ -124,6 +186,8 @@ export default function SetupBuilder({ schema, existingSetup, onSaved, onBack }:
             onChange={handleChange}
           />
         ))}
+          </>
+        )}
       </div>
     </div>
   );
