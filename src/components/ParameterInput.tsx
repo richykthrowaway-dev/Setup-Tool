@@ -13,11 +13,15 @@ export default function ParameterInput({ param, value, onChange }: Props) {
   const [showInfo, setShowInfo] = useState(false);
 
   if (param.type === 'select') {
+    const selectChanged = String(value) !== String(param.defaultValue);
     return (
       <div className="flex items-center gap-3 py-2 border-b border-gray-800 last:border-0">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1">
             <span className="text-sm text-gray-200 font-medium">{param.label}</span>
+            {selectChanged && (
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 ml-0.5 flex-shrink-0" />
+            )}
             <button
               onClick={() => setShowInfo((v) => !v)}
               className="text-gray-500 hover:text-gray-300 text-xs ml-1 flex-shrink-0"
@@ -52,6 +56,8 @@ export default function ParameterInput({ param, value, onChange }: Props) {
   const max = param.max ?? 100;
   const step = param.step ?? 1;
   const pct = max !== min ? ((numValue - min) / (max - min)) * 100 : 0;
+  const delta = numValue - Number(param.defaultValue);
+  const deltaStr = delta !== 0 ? `${delta > 0 ? '+' : ''}${parseFloat(delta.toFixed(4))}` : null;
 
   return (
     <div className="py-2 border-b border-gray-800 last:border-0">
@@ -59,6 +65,11 @@ export default function ParameterInput({ param, value, onChange }: Props) {
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1">
             <span className="text-sm text-gray-200 font-medium">{param.label}</span>
+            {deltaStr && (
+              <span className={`text-xs font-semibold ml-0.5 flex-shrink-0 ${delta > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                {deltaStr}
+              </span>
+            )}
             <button
               onClick={() => setShowInfo((v) => !v)}
               className="text-gray-500 hover:text-gray-300 text-xs ml-1 flex-shrink-0"
