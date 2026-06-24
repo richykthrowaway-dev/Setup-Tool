@@ -1,7 +1,7 @@
 'use client';
 
 import { CarSchema, Parameter, SetupValues } from '@/types/setup';
-import { computeChanges } from '@/lib/analysis';
+import { computeChanges, computeTechViolations } from '@/lib/analysis';
 
 interface Props {
   schema: CarSchema;
@@ -21,8 +21,9 @@ function displayValue(param: Parameter, value: number | string | boolean): strin
 
 export default function ChangesPanel({ schema, values, onReset, onResetAll }: Props) {
   const changes = computeChanges(schema, values);
+  const violations = computeTechViolations(schema, values);
 
-  if (changes.length === 0) {
+  if (changes.length === 0 && violations.length === 0) {
     return (
       <div className="bg-gray-900 border border-gray-700 rounded-xl p-8 text-center">
         <p className="text-gray-400 text-sm">
@@ -35,8 +36,50 @@ export default function ChangesPanel({ schema, values, onReset, onResetAll }: Pr
     );
   }
 
+  if (changes.length === 0 && violations.length > 0) {
+    return (
+      <div className="space-y-4">
+        <div className="bg-red-950/40 border border-red-700/50 rounded-xl p-4 space-y-2">
+          <p className="text-sm font-semibold text-red-400 flex items-center gap-2">
+            <span>⚠</span> Tech Inspection — {violations.length} violation{violations.length === 1 ? '' : 's'}
+          </p>
+          {violations.map(({ param, categoryLabel, value, limit, type }) => (
+            <div key={param.id} className="flex items-center justify-between text-sm">
+              <div>
+                <span className="text-red-300 font-medium">{param.label}</span>
+                <span className="text-red-600 text-xs ml-2">{categoryLabel}</span>
+              </div>
+              <span className="text-red-300 text-xs">
+                {value}{param.unit ? ` ${param.unit}` : ''} {type === 'below_min' ? '<' : '>'} {limit}{param.unit ? ` ${param.unit}` : ''} minimum
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-4">
+      {violations.length > 0 && (
+        <div className="bg-red-950/40 border border-red-700/50 rounded-xl p-4 space-y-2">
+          <p className="text-sm font-semibold text-red-400 flex items-center gap-2">
+            <span>⚠</span> Tech Inspection — {violations.length} violation{violations.length === 1 ? '' : 's'}
+          </p>
+          {violations.map(({ param, categoryLabel, value, limit, type }) => (
+            <div key={param.id} className="flex items-center justify-between text-sm">
+              <div>
+                <span className="text-red-300 font-medium">{param.label}</span>
+                <span className="text-red-600 text-xs ml-2">{categoryLabel}</span>
+              </div>
+              <span className="text-red-300 text-xs">
+                {value}{param.unit ? ` ${param.unit}` : ''} {type === 'below_min' ? '<' : '>'} {limit}{param.unit ? ` ${param.unit}` : ''} minimum
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+
       <div className="flex items-center justify-between">
         <p className="text-sm text-gray-400">
           <span className="text-gray-100 font-semibold">{changes.length}</span>{' '}

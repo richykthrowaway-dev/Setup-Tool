@@ -28,6 +28,10 @@ export interface Parameter {
   description: string;
   /** What increasing this value does to the car */
   increaseEffect: string;
+  /** Tech inspection floor — value must be >= this to pass scrutineering */
+  techMin?: number;
+  /** Tech inspection ceiling — value must be <= this to pass scrutineering */
+  techMax?: number;
 }
 
 export interface Category {

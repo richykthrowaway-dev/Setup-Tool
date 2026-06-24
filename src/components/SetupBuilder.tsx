@@ -4,11 +4,12 @@ import { CarSchema, Setup } from '@/types/setup';
 import CategoryPanel from './CategoryPanel';
 import ChangesPanel from './ChangesPanel';
 import HandlingGuide from './HandlingGuide';
+import TireTemps from './TireTemps';
 import { createSetup, downloadSetup, saveSetup } from '@/lib/setup';
-import { computeChanges } from '@/lib/analysis';
+import { computeChanges, computeTechViolations } from '@/lib/analysis';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 
-type Tab = 'tune' | 'changes' | 'handling';
+type Tab = 'tune' | 'changes' | 'handling' | 'tiretemps';
 
 interface Props {
   schema: CarSchema;
@@ -31,6 +32,11 @@ export default function SetupBuilder({ schema, existingSetup, onSaved, onBack }:
 
   const changeCount = useMemo(
     () => computeChanges(schema, setup.values).length,
+    [schema, setup.values]
+  );
+
+  const violationCount = useMemo(
+    () => computeTechViolations(schema, setup.values).length,
     [schema, setup.values]
   );
 
@@ -119,8 +125,9 @@ export default function SetupBuilder({ schema, existingSetup, onSaved, onBack }:
         <div className="max-w-4xl mx-auto flex items-center gap-1 mt-3 -mb-px">
           {([
             ['tune', 'Tune'],
-            ['changes', `Changes${changeCount ? ` (${changeCount})` : ''}`],
+            ['changes', `Changes${changeCount ? ` (${changeCount})` : ''}${violationCount ? ` ⚠` : ''}`],
             ['handling', 'Handling Guide'],
+            ['tiretemps', 'Tire Temps'],
           ] as [Tab, string][]).map(([id, label]) => (
             <button
               key={id}
@@ -145,10 +152,14 @@ export default function SetupBuilder({ schema, existingSetup, onSaved, onBack }:
             onReset={handleChange}
             onResetAll={handleResetAll}
           />
-        )}
+          )}
 
         {tab === 'handling' && (
           <HandlingGuide schema={schema} values={setup.values} onChange={handleChange} />
+        )}
+
+        {tab === 'tiretemps' && (
+          <TireTemps schema={schema} values={setup.values} onChange={handleChange} />
         )}
 
         {tab === 'tune' && (
