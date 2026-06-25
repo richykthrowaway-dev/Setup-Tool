@@ -3,6 +3,19 @@ import { repo } from '@/lib/repository';
 
 export { repo };
 
+// Import / export helpers live in setup-io; re-exported here for convenience.
+export {
+  exportSetupJson,
+  exportSetupsJson,
+  downloadSetup,
+  downloadSetups,
+  parseImport,
+  reconcileImported,
+  readFileAsText,
+  isValidSetup,
+  SetupImportError,
+} from '@/lib/setup-io';
+
 export function buildDefaultValues(schema: CarSchema): SetupValues {
   const values: SetupValues = {};
   for (const category of schema.categories) {
@@ -44,18 +57,4 @@ export function createSetup(carId: string, name: string, schema: CarSchema): Set
     createdAt: Date.now(),
     updatedAt: Date.now(),
   };
-}
-
-export function exportSetupJson(setup: Setup): string {
-  return JSON.stringify(setup, null, 2);
-}
-
-export function downloadSetup(setup: Setup): void {
-  const blob = new Blob([exportSetupJson(setup)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `${setup.name.replace(/\s+/g, '_')}.json`;
-  a.click();
-  URL.revokeObjectURL(url);
 }

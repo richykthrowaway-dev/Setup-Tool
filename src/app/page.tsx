@@ -1,9 +1,16 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { schemas } from '@/data/schemas';
 import { CarSchema, Setup } from '@/types/setup';
 import { repo } from '@/lib/repository';
+import {
+  downloadSetups,
+  parseImport,
+  reconcileImported,
+  readFileAsText,
+  SetupImportError,
+} from '@/lib/setup-io';
 import SetupBuilder from '@/components/SetupBuilder';
 import SetupList from '@/components/SetupList';
 import CompareView from '@/components/CompareView';
@@ -27,10 +34,43 @@ export default function Home() {
   const [activeSetup, setActiveSetup] = useState<Setup | undefined>(undefined);
   const [compareSetups, setCompareSetups] = useState<[Setup, Setup] | null>(null);
   const [savedSetups, setSavedSetups] = useState<Setup[]>([]);
+  const [ioMessage, setIoMessage] = useState<{ kind: 'ok' | 'error'; text: string } | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const refresh = () => repo.list().then(setSavedSetups);
 
-  useEffect(() => { refresh(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { refresh(); }, []);
+
+  const flash = (kind: 'ok' | 'error', text: string) => {
+    setIoMessage({ kind, text });
+    setTimeout(() => setIoMessage(null), 4000);
+  };
+
+  const handleExportAll = () => {
+    if (savedSetups.length === 0) return;
+    downloadSetups(savedSetups);
+    flash('ok', `Exported ${savedSetups.length} setup${savedSetups.length !== 1 ? 's' : ''}.`);
+  };
+
+  const handleImportClick = () => fileInputRef.current?.click();
+
+  const handleImportFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = ''; // allow re-importing the same file
+    if (!file) return;
+    try {
+      const text = await readFileAsText(file);
+      const parsed = parseImport(text);
+      const existing = await repo.list();
+      const reconciled = reconcileImported(parsed, existing);
+      await repo.importMany(reconciled);
+      await refresh();
+      flash('ok', `Imported ${reconciled.length} setup${reconciled.length !== 1 ? 's' : ''}.`);
+    } catch (err) {
+      const msg = err instanceof SetupImportError ? err.message : 'Import failed.';
+      flash('error', msg);
+    }
+  };
 
   // Group saved setups by car id for per-class sections
   const setupsByCarId = useMemo(() => {
@@ -161,12 +201,52 @@ export default function Home() {
 
         {/* Saved setups grouped by car class */}
         <section>
-          <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-4">
-            Saved Setups
-          </h2>
+          <div className="flex items-center justify-between gap-3 mb-4 flex-wrap">
+            <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-widest">
+              Saved Setups
+            </h2>
+            <div className="flex items-center gap-2">
+              {ioMessage && (
+                <span
+                  className={`text-xs ${
+                    ioMessage.kind === 'ok' ? 'text-emerald-400' : 'text-red-400'
+                  }`}
+                >
+                  {ioMessage.text}
+                </span>
+              )}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="application/json,.json"
+                onChange={handleImportFile}
+                className="hidden"
+              />
+              <button
+                onClick={handleImportClick}
+                className="text-xs px-3 py-1.5 bg-gray-800 hover:bg-gray-700 border border-gray-700 text-gray-300 hover:text-gray-100 rounded-lg transition-colors"
+              >
+                Import
+              </button>
+              <button
+                onClick={handleExportAll}
+                disabled={savedSetups.length === 0}
+                className="text-xs px-3 py-1.5 bg-gray-800 hover:bg-gray-700 border border-gray-700 text-gray-300 hover:text-gray-100 rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-gray-800"
+              >
+                Export all
+              </button>
+            </div>
+          </div>
           {savedSetups.length === 0 ? (
             <p className="text-gray-500 text-sm text-center py-8">
-              No saved setups yet. Create one above.
+              No saved setups yet. Create one above, or{' '}
+              <button
+                onClick={handleImportClick}
+                className="text-blue-400 hover:text-blue-300 underline underline-offset-2"
+              >
+                import from a file
+              </button>
+              .
             </p>
           ) : (
             <div className="space-y-8">
