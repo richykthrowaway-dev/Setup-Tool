@@ -3,11 +3,12 @@
 import { useState, useEffect } from 'react';
 import { schemas } from '@/data/schemas';
 import { CarSchema, Setup } from '@/types/setup';
-import { loadSetups } from '@/lib/setup';
+import { repo } from '@/lib/repository';
 import SetupBuilder from '@/components/SetupBuilder';
 import SetupList from '@/components/SetupList';
+import CompareView from '@/components/CompareView';
 
-type View = 'home' | 'builder';
+type View = 'home' | 'builder' | 'compare';
 
 const CLASS_COLORS: Record<string, string> = {
   GT3: 'bg-blue-900 text-blue-300 border-blue-700',
@@ -24,13 +25,12 @@ export default function Home() {
   const [view, setView] = useState<View>('home');
   const [activeSchema, setActiveSchema] = useState<CarSchema | null>(null);
   const [activeSetup, setActiveSetup] = useState<Setup | undefined>(undefined);
+  const [compareSetups, setCompareSetups] = useState<[Setup, Setup] | null>(null);
   const [savedSetups, setSavedSetups] = useState<Setup[]>([]);
 
-  useEffect(() => {
-    setSavedSetups(loadSetups());
-  }, []);
+  const refresh = () => repo.list().then(setSavedSetups);
 
-  const refresh = () => setSavedSetups(loadSetups());
+  useEffect(() => { refresh(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const openBuilder = (schema: CarSchema, existing?: Setup) => {
     setActiveSchema(schema);
@@ -38,10 +38,25 @@ export default function Home() {
     setView('builder');
   };
 
+  const openCompare = (a: Setup, b: Setup) => {
+    setCompareSetups([a, b]);
+    setView('compare');
+  };
+
   const handleOpenSavedSetup = (setup: Setup) => {
     const schema = schemas.find((s) => s.id === setup.carId);
     if (schema) openBuilder(schema, setup);
   };
+
+  if (view === 'compare' && compareSetups) {
+    return (
+      <CompareView
+        setupA={compareSetups[0]}
+        setupB={compareSetups[1]}
+        onBack={() => { setView('home'); refresh(); }}
+      />
+    );
+  }
 
   if (view === 'builder' && activeSchema) {
     return (
@@ -49,10 +64,7 @@ export default function Home() {
         schema={activeSchema}
         existingSetup={activeSetup}
         onSaved={refresh}
-        onBack={() => {
-          setView('home');
-          refresh();
-        }}
+        onBack={() => { setView('home'); refresh(); }}
       />
     );
   }
@@ -125,6 +137,7 @@ export default function Home() {
             setups={savedSetups}
             onOpen={handleOpenSavedSetup}
             onDeleted={refresh}
+            onCompare={openCompare}
           />
         </section>
       </div>

@@ -5,11 +5,12 @@ import CategoryPanel from './CategoryPanel';
 import ChangesPanel from './ChangesPanel';
 import HandlingGuide from './HandlingGuide';
 import TireTemps from './TireTemps';
+import LapTimePanel from './LapTimePanel';
 import { createSetup, downloadSetup, saveSetup } from '@/lib/setup';
 import { computeChanges, computeTechViolations } from '@/lib/analysis';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 
-type Tab = 'tune' | 'changes' | 'handling' | 'tiretemps';
+type Tab = 'tune' | 'changes' | 'handling' | 'tiretemps' | 'laptimes';
 
 interface Props {
   schema: CarSchema;
@@ -139,6 +140,7 @@ export default function SetupBuilder({ schema, existingSetup, onSaved, onBack }:
             ['changes', `Changes${changes.length ? ` (${changes.length})` : ''}${violationCount ? ` ⚠` : ''}`],
             ['handling', 'Handling Guide'],
             ['tiretemps', 'Tire Temps'],
+            ['laptimes', `Lap Times${(setup.lapTimes?.length ?? 0) > 0 ? ` (${setup.lapTimes!.length})` : ''}`],
           ] as [Tab, string][]).map(([id, label]) => (
             <button
               key={id}
@@ -174,6 +176,16 @@ export default function SetupBuilder({ schema, existingSetup, onSaved, onBack }:
 
           {tab === 'tiretemps' && (
             <TireTemps schema={schema} values={setup.values} onChange={handleChange} />
+          )}
+
+          {tab === 'laptimes' && (
+            <LapTimePanel
+              setup={setup}
+              onUpdated={(updated) => {
+                setSetup(updated);
+                onSaved?.(updated);
+              }}
+            />
           )}
 
           {tab === 'tune' && (

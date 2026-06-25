@@ -1,6 +1,7 @@
 import { CarSchema, Setup, SetupValues } from '@/types/setup';
+import { repo } from '@/lib/repository';
 
-const STORAGE_KEY = 'iracing_setups';
+export { repo };
 
 export function buildDefaultValues(schema: CarSchema): SetupValues {
   const values: SetupValues = {};
@@ -12,30 +13,25 @@ export function buildDefaultValues(schema: CarSchema): SetupValues {
   return values;
 }
 
+/** @deprecated Use repo.list() */
 export function loadSetups(): Setup[] {
   if (typeof window === 'undefined') return [];
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = localStorage.getItem('iracing_setups');
     return raw ? JSON.parse(raw) : [];
   } catch {
     return [];
   }
 }
 
+/** @deprecated Use repo.save() */
 export function saveSetup(setup: Setup): void {
-  const setups = loadSetups();
-  const idx = setups.findIndex((s) => s.id === setup.id);
-  if (idx >= 0) {
-    setups[idx] = setup;
-  } else {
-    setups.push(setup);
-  }
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(setups));
+  repo.save(setup);
 }
 
+/** @deprecated Use repo.remove() */
 export function deleteSetup(id: string): void {
-  const setups = loadSetups().filter((s) => s.id !== id);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(setups));
+  repo.remove(id);
 }
 
 export function createSetup(carId: string, name: string, schema: CarSchema): Setup {
@@ -44,6 +40,7 @@ export function createSetup(carId: string, name: string, schema: CarSchema): Set
     name,
     carId,
     values: buildDefaultValues(schema),
+    lapTimes: [],
     createdAt: Date.now(),
     updatedAt: Date.now(),
   };

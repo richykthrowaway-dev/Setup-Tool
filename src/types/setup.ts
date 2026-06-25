@@ -49,6 +49,14 @@ export interface CarSchema {
 
 export type SetupValues = Record<string, number | string | boolean>;
 
+export interface LapTime {
+  id: string;
+  /** Lap duration in milliseconds */
+  lapTimeMs: number;
+  note?: string;
+  recordedAt: number;
+}
+
 export interface Setup {
   id: string;
   name: string;
@@ -56,6 +64,7 @@ export interface Setup {
   track?: string;
   notes?: string;
   values: SetupValues;
+  lapTimes?: LapTime[];
   createdAt: number;
   updatedAt: number;
 }
