@@ -9,6 +9,7 @@ import TireTemps from './TireTemps';
 import LapTimePanel from './LapTimePanel';
 import { createSetup, downloadSetup } from '@/lib/setup';
 import { repo } from '@/lib/repository';
+import { parseImport, readFileAsText, SetupImportError } from '@/lib/setup-io';
 import { computeChanges, computeTechViolations } from '@/lib/analysis';
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 
@@ -30,10 +31,12 @@ export default function SetupBuilder({ schema, existingSetup, peerSetups, onSave
     return createSetup(schema.id, `New ${schema.name} Setup`, schema);
   });
   const [savedBanner, setSavedBanner] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
   const [tab, setTab] = useState<Tab>('tune');
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [compareOpen, setCompareOpen] = useState(false);
   const compareRef = useRef<HTMLDivElement>(null);
+  const uploadRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (existingSetup) setSetup(existingSetup);
@@ -99,6 +102,30 @@ export default function SetupBuilder({ schema, existingSetup, peerSetups, onSave
 
   const handleNotesChange = (notes: string) => {
     setSetup((prev) => ({ ...prev, notes, updatedAt: Date.now() }));
+  };
+
+  const handleUploadFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    try {
+      const text = await readFileAsText(file);
+      const [imported] = parseImport(text);
+      if (imported.carId !== schema.id) {
+        setUploadError(`Wrong car (expected ${schema.id}, got ${imported.carId})`);
+        setTimeout(() => setUploadError(null), 4000);
+        return;
+      }
+      setSetup((prev) => ({
+        ...prev,
+        values: { ...prev.values, ...imported.values },
+        updatedAt: Date.now(),
+      }));
+    } catch (err) {
+      const msg = err instanceof SetupImportError ? err.message : 'Upload failed.';
+      setUploadError(msg);
+      setTimeout(() => setUploadError(null), 4000);
+    }
   };
 
   return (
@@ -176,11 +203,37 @@ export default function SetupBuilder({ schema, existingSetup, peerSetups, onSave
               </div>
             )}
 
+            {uploadError && (
+              <span className="text-xs text-red-400 font-medium">{uploadError}</span>
+            )}
+            <input
+              ref={uploadRef}
+              type="file"
+              accept="application/json,.json"
+              onChange={handleUploadFile}
+              className="hidden"
+            />
+            <button
+              onClick={() => uploadRef.current?.click()}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-800 hover:bg-gray-700 border border-gray-600 text-gray-300 hover:text-white text-sm rounded-lg transition-colors"
+              title="Upload a setup file to load its values"
+            >
+              <svg className="w-4 h-4" viewBox="0 0 16 16" fill="none">
+                <path d="M8 2v8m0 0L5 7m3 3l3-3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M2 11v1.5A1.5 1.5 0 003.5 14h9a1.5 1.5 0 001.5-1.5V11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+              </svg>
+              Upload
+            </button>
             <button
               onClick={() => downloadSetup(setup)}
-              className="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-gray-300 text-sm rounded-lg transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-gray-300 text-sm rounded-lg transition-colors"
+              title="Download this setup as a JSON file"
             >
-              Export JSON
+              <svg className="w-4 h-4" viewBox="0 0 16 16" fill="none">
+                <path d="M8 10V2m0 8l-3-3m3 3l3-3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M2 11v1.5A1.5 1.5 0 003.5 14h9a1.5 1.5 0 001.5-1.5V11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+              </svg>
+              Export
             </button>
             <button
               onClick={handleSave}
