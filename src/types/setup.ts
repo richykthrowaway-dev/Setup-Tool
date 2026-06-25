@@ -44,6 +44,8 @@ export interface CarSchema {
   id: string;
   name: string;
   class: CarClass;
+  /** The sim this schema belongs to, e.g. "iRacing" or "Le Mans Ultimate". */
+  game: string;
   categories: Category[];
 }
 

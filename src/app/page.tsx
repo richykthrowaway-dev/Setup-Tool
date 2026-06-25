@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo, useRef } from 'react';
-import { schemas } from '@/data/schemas';
+import { schemas, GAMES, schemasByGame } from '@/data/schemas';
 import { CarSchema, Setup } from '@/types/setup';
 import { repo } from '@/lib/repository';
 import {
@@ -14,6 +14,8 @@ import {
 import SetupBuilder from '@/components/SetupBuilder';
 import SetupList from '@/components/SetupList';
 import CompareView from '@/components/CompareView';
+
+const GAME_STORAGE_KEY = 'iracing_selected_game';
 
 type View = 'home' | 'builder' | 'compare';
 
@@ -35,11 +37,39 @@ export default function Home() {
   const [compareSetups, setCompareSetups] = useState<[Setup, Setup] | null>(null);
   const [savedSetups, setSavedSetups] = useState<Setup[]>([]);
   const [ioMessage, setIoMessage] = useState<{ kind: 'ok' | 'error'; text: string } | null>(null);
+  const [selectedGame, setSelectedGame] = useState<string>('iRacing');
+  const [gameDropdownOpen, setGameDropdownOpen] = useState(false);
+  const gameDropdownRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const refresh = () => repo.list().then(setSavedSetups);
 
-  useEffect(() => { refresh(); }, []);
+  useEffect(() => {
+    refresh();
+    const stored = localStorage.getItem(GAME_STORAGE_KEY);
+    if (stored) setSelectedGame(stored);
+  }, []);
+
+  // Close game dropdown on outside click
+  useEffect(() => {
+    if (!gameDropdownOpen) return;
+    const handler = (e: MouseEvent) => {
+      if (gameDropdownRef.current && !gameDropdownRef.current.contains(e.target as Node)) {
+        setGameDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [gameDropdownOpen]);
+
+  const handleSelectGame = (gameId: string) => {
+    setSelectedGame(gameId);
+    localStorage.setItem(GAME_STORAGE_KEY, gameId);
+    setGameDropdownOpen(false);
+  };
+
+  const activeGame = GAMES.find((g) => g.id === selectedGame) ?? GAMES[0];
+  const activeGameSchemas = schemasByGame(selectedGame);
 
   const flash = (kind: 'ok' | 'error', text: string) => {
     setIoMessage({ kind, text });
@@ -82,10 +112,10 @@ export default function Home() {
     return map;
   }, [savedSetups]);
 
-  // Schemas that have at least one saved setup, in schema order
+  // Schemas (for the active game) that have at least one saved setup, in schema order
   const schemasWithSetups = useMemo(
-    () => schemas.filter((s) => setupsByCarId.has(s.id)),
-    [setupsByCarId]
+    () => activeGameSchemas.filter((s) => setupsByCarId.has(s.id)),
+    [activeGameSchemas, setupsByCarId]
   );
 
   const openBuilder = (schema: CarSchema, existing?: Setup) => {
@@ -135,11 +165,81 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gray-950 text-gray-100">
       <div className="border-b border-gray-800 px-4 py-5">
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-2xl font-bold tracking-tight">iRacing Setup Builder</h1>
-          <p className="text-gray-400 text-sm mt-1">
-            Build and save car setups for all iRacing car classes
-          </p>
+        <div className="max-w-4xl mx-auto flex items-start justify-between gap-4 flex-wrap">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight">Setup Builder</h1>
+            <p className="text-gray-400 text-sm mt-1">
+              Build and save car setups across multiple sim racing titles
+            </p>
+          </div>
+
+          {/* Game selector dropdown */}
+          <div className="relative flex-shrink-0" ref={gameDropdownRef}>
+            <button
+              onClick={() => setGameDropdownOpen((v) => !v)}
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-medium transition-all ${
+                gameDropdownOpen
+                  ? 'bg-gray-800 border-gray-600 text-gray-100'
+                  : 'bg-gray-900 border-gray-700 text-gray-300 hover:border-gray-500 hover:text-gray-100'
+              }`}
+            >
+              <span className="text-blue-400 text-xs font-semibold uppercase tracking-wider">
+                {activeGame.shortName}
+              </span>
+              <span className="text-gray-400 hidden sm:inline">{activeGame.name}</span>
+              <svg
+                className={`w-4 h-4 text-gray-500 transition-transform ${gameDropdownOpen ? 'rotate-180' : ''}`}
+                viewBox="0 0 16 16" fill="none"
+              >
+                <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+
+            {gameDropdownOpen && (
+              <div className="absolute right-0 top-full mt-2 z-50 w-72 bg-gray-900 border border-gray-700 rounded-xl shadow-2xl overflow-hidden">
+                <p className="px-3 py-2 text-[10px] text-gray-500 uppercase tracking-widest border-b border-gray-800 font-semibold">
+                  Select Sim
+                </p>
+                <div className="divide-y divide-gray-800/60">
+                  {GAMES.map((game) => {
+                    const hasSchemas = schemasByGame(game.id).length > 0;
+                    const isActive = game.id === selectedGame;
+                    return (
+                      <button
+                        key={game.id}
+                        onClick={() => hasSchemas && handleSelectGame(game.id)}
+                        disabled={!hasSchemas}
+                        className={`w-full text-left px-4 py-3 transition-colors flex items-start justify-between gap-3 ${
+                          isActive
+                            ? 'bg-blue-600/15 text-blue-300'
+                            : hasSchemas
+                            ? 'hover:bg-gray-800 text-gray-200'
+                            : 'opacity-40 cursor-not-allowed text-gray-500'
+                        }`}
+                      >
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-semibold">{game.name}</span>
+                            {!hasSchemas && (
+                              <span className="text-[10px] text-gray-600 border border-gray-700 rounded px-1.5 py-0.5">
+                                Coming soon
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-xs text-gray-500 mt-0.5 leading-snug">{game.description}</p>
+                        </div>
+                        {isActive && (
+                          <svg className="flex-shrink-0 mt-0.5 w-4 h-4 text-blue-400" viewBox="0 0 16 16" fill="none">
+                            <path d="M3 8l4 4 6-7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -149,8 +249,14 @@ export default function Home() {
           <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-4">
             New Setup — Select Car Class
           </h2>
+          {activeGameSchemas.length === 0 ? (
+            <div className="text-center py-16 bg-gray-900 border border-gray-800 rounded-xl">
+              <p className="text-gray-400 text-sm font-medium">{activeGame.name} schemas coming soon</p>
+              <p className="text-gray-600 text-xs mt-1">{activeGame.description}</p>
+            </div>
+          ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {schemas.map((schema) => {
+            {activeGameSchemas.map((schema) => {
               const colorClass = CLASS_COLORS[schema.class] ?? 'bg-gray-800 text-gray-300 border-gray-600';
               const savedCount = setupsByCarId.get(schema.id)?.length ?? 0;
               return (
@@ -197,6 +303,7 @@ export default function Home() {
               );
             })}
           </div>
+          )}
         </section>
 
         {/* Saved setups grouped by car class */}
