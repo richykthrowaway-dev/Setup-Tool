@@ -4,6 +4,7 @@ import { CarSchema, Setup } from '@/types/setup';
 import CategoryPanel from './CategoryPanel';
 import ChangesPanel from './ChangesPanel';
 import HandlingGuide from './HandlingGuide';
+import KnowledgeBase from './KnowledgeBase';
 import TireTemps from './TireTemps';
 import LapTimePanel from './LapTimePanel';
 import { createSetup, downloadSetup } from '@/lib/setup';
@@ -11,7 +12,7 @@ import { repo } from '@/lib/repository';
 import { computeChanges, computeTechViolations } from '@/lib/analysis';
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 
-type Tab = 'tune' | 'changes' | 'handling' | 'tiretemps' | 'laptimes';
+type Tab = 'tune' | 'changes' | 'handling' | 'tiretemps' | 'laptimes' | 'knowledge';
 
 interface Props {
   schema: CarSchema;
@@ -198,6 +199,7 @@ export default function SetupBuilder({ schema, existingSetup, peerSetups, onSave
             ['handling', 'Handling Guide'],
             ['tiretemps', 'Tire Temps'],
             ['laptimes', `Lap Times${(setup.lapTimes?.length ?? 0) > 0 ? ` (${setup.lapTimes!.length})` : ''}`],
+            ['knowledge', 'Knowledge'],
           ] as [Tab, string][]).map(([id, label]) => (
             <button
               key={id}
@@ -233,6 +235,10 @@ export default function SetupBuilder({ schema, existingSetup, peerSetups, onSave
 
           {tab === 'tiretemps' && (
             <TireTemps schema={schema} values={setup.values} onChange={handleChange} />
+          )}
+
+          {tab === 'knowledge' && (
+            <KnowledgeBase />
           )}
 
           {tab === 'laptimes' && (
