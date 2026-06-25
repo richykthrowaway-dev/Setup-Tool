@@ -28,7 +28,7 @@ export interface SetupExportEnvelope {
   setups: Setup[];
 }
 
-// ─── Validation ──────────────────────────────────────────────────────────────
+// ─── Validation ───────────────────────────────────────────────────────────────────────────────
 
 function isPlainObject(v: unknown): v is Record<string, unknown> {
   return typeof v === 'object' && v !== null && !Array.isArray(v);
@@ -77,7 +77,7 @@ function normalizeSetup(raw: Record<string, unknown>): Setup {
   };
 }
 
-// ─── Export ──────────────────────────────────────────────────────────────────
+// ─── Export ─────────────────────────────────────────────────────────────────────────────────
 
 export function buildExportEnvelope(setups: Setup[]): SetupExportEnvelope {
   return {
@@ -120,9 +120,11 @@ function triggerDownload(json: string, filename: string): void {
   URL.revokeObjectURL(url);
 }
 
-/** Download a single setup as `<name>.setup.json`. */
+/** Download a single setup as `<name>[_<track>].setup.json`. */
 export function downloadSetup(setup: Setup): void {
-  triggerDownload(exportSetupJson(setup), `${slugify(setup.name)}.setup.json`);
+  const parts = [slugify(setup.name)];
+  if (setup.track) parts.push(slugify(setup.track));
+  triggerDownload(exportSetupJson(setup), `${parts.join('_')}.setup.json`);
 }
 
 /** Download many setups as one backup file. */
@@ -130,11 +132,11 @@ export function downloadSetups(setups: Setup[], filename?: string): void {
   const stamp = new Date().toISOString().slice(0, 10);
   triggerDownload(
     exportSetupsJson(setups),
-    filename ?? `iracing-setups-${stamp}.json`
+    filename ?? `sim-setups-${stamp}.json`
   );
 }
 
-// ─── Import ──────────────────────────────────────────────────────────────────
+// ─── Import ─────────────────────────────────────────────────────────────────────────────────
 
 export class SetupImportError extends Error {}
 

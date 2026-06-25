@@ -4,6 +4,7 @@ import { Setup } from '@/types/setup';
 import { repo } from '@/lib/repository';
 import { schemas } from '@/data/schemas';
 import { formatLapTime, computeLapStats } from '@/lib/laptime';
+import { downloadSetup } from '@/lib/setup-io';
 import { useState } from 'react';
 
 interface Props {
@@ -135,12 +136,22 @@ export default function SetupList({ setups, onOpen, onDeleted, onCompare }: Prop
                   </div>
                 )}
                 {!compareMode && (
-                  <button
-                    onClick={(e) => handleDelete(e, setup.id)}
-                    className="text-gray-600 hover:text-red-400 text-xs px-2 py-1 rounded transition-colors"
-                  >
-                    ✕
-                  </button>
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={(e) => { e.stopPropagation(); downloadSetup(setup); }}
+                      className="text-gray-600 hover:text-blue-400 text-sm px-2 py-1 rounded transition-colors"
+                      title="Export setup"
+                    >
+                      ↓
+                    </button>
+                    <button
+                      onClick={(e) => handleDelete(e, setup.id)}
+                      className="text-gray-600 hover:text-red-400 text-xs px-2 py-1 rounded transition-colors"
+                      title="Delete setup"
+                    >
+                      ✕
+                    </button>
+                  </div>
                 )}
               </div>
             </div>

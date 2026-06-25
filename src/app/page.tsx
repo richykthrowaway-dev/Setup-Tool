@@ -14,6 +14,7 @@ import {
 import SetupBuilder from '@/components/SetupBuilder';
 import SetupList from '@/components/SetupList';
 import CompareView from '@/components/CompareView';
+import ImportDialog from '@/components/ImportDialog';
 
 const GAME_STORAGE_KEY = 'iracing_selected_game';
 
@@ -42,6 +43,7 @@ export default function Home() {
   const [compareSetups, setCompareSetups] = useState<[Setup, Setup] | null>(null);
   const [savedSetups, setSavedSetups] = useState<Setup[]>([]);
   const [ioMessage, setIoMessage] = useState<{ kind: 'ok' | 'error'; text: string } | null>(null);
+  const [pendingImport, setPendingImport] = useState<Setup[] | null>(null);
   const [selectedGame, setSelectedGame] = useState<string>('iRacing');
   const [gameDropdownOpen, setGameDropdownOpen] = useState(false);
   const gameDropdownRef = useRef<HTMLDivElement>(null);
@@ -91,19 +93,28 @@ export default function Home() {
 
   const handleImportFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    e.target.value = ''; // allow re-importing the same file
+    e.target.value = '';
     if (!file) return;
     try {
       const text = await readFileAsText(file);
       const parsed = parseImport(text);
-      const existing = await repo.list();
-      const reconciled = reconcileImported(parsed, existing);
-      await repo.importMany(reconciled);
-      await refresh();
-      flash('ok', `Imported ${reconciled.length} setup${reconciled.length !== 1 ? 's' : ''}.`);
+      setPendingImport(parsed);
     } catch (err) {
       const msg = err instanceof SetupImportError ? err.message : 'Import failed.';
       flash('error', msg);
+    }
+  };
+
+  const handleImportConfirm = async (selected: Setup[]) => {
+    setPendingImport(null);
+    try {
+      const existing = await repo.list();
+      const reconciled = reconcileImported(selected, existing);
+      await repo.importMany(reconciled);
+      await refresh();
+      flash('ok', `Imported ${reconciled.length} setup${reconciled.length !== 1 ? 's' : ''}.`);
+    } catch {
+      flash('error', 'Import failed.');
     }
   };
 
@@ -138,6 +149,17 @@ export default function Home() {
     const schema = schemas.find((s) => s.id === setup.carId);
     if (schema) openBuilder(schema, setup);
   };
+
+  if (pendingImport) {
+    return (
+      <ImportDialog
+        parsed={pendingImport}
+        existing={savedSetups}
+        onConfirm={handleImportConfirm}
+        onCancel={() => setPendingImport(null)}
+      />
+    );
+  }
 
   if (view === 'compare' && compareSetups) {
     return (
