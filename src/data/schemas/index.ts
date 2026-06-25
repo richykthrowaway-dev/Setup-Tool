@@ -6,9 +6,17 @@ import gtpSchema from './gtp';
 import sportsCarSchema from './sportscar';
 import streetStockSchema from './streetstock';
 import lateModelSchema from './latemodel';
+import accGt3Schema from './acc-gt3';
+import accGt4Schema from './acc-gt4';
+import lmuHypercarSchema from './lmu-hypercar';
+import lmuLmp2Schema from './lmu-lmp2';
+import lmuLmgt3Schema from './lmu-lmgt3';
+import acGt3Schema from './ac-gt3';
+import acRoadSchema from './ac-road';
 import { CarSchema } from '@/types/setup';
 
 export const schemas: CarSchema[] = [
+  // iRacing
   gt3Schema,
   gt4Schema,
   gtpSchema,
@@ -17,6 +25,16 @@ export const schemas: CarSchema[] = [
   ovalSchema,
   lateModelSchema,
   streetStockSchema,
+  // Le Mans Ultimate
+  lmuHypercarSchema,
+  lmuLmp2Schema,
+  lmuLmgt3Schema,
+  // Assetto Corsa Competizione
+  accGt3Schema,
+  accGt4Schema,
+  // Assetto Corsa
+  acGt3Schema,
+  acRoadSchema,
 ];
 
 export interface GameConfig {
@@ -78,4 +96,11 @@ export {
   sportsCarSchema,
   streetStockSchema,
   lateModelSchema,
+  accGt3Schema,
+  accGt4Schema,
+  lmuHypercarSchema,
+  lmuLmp2Schema,
+  lmuLmgt3Schema,
+  acGt3Schema,
+  acRoadSchema,
 };

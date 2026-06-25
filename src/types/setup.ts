@@ -6,7 +6,12 @@ export type CarClass =
   | 'Oval'
   | 'SportsCar'
   | 'StreetStock'
-  | 'LateModel';
+  | 'LateModel'
+  | 'Hypercar'
+  | 'LMP2'
+  | 'LMGT3'
+  | 'GT2'
+  | 'Road';
 
 export type ParameterType = 'number' | 'select' | 'boolean';
 

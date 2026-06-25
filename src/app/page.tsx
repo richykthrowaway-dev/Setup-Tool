@@ -28,6 +28,11 @@ const CLASS_COLORS: Record<string, string> = {
   Oval: 'bg-orange-900 text-orange-300 border-orange-700',
   LateModel: 'bg-orange-900 text-orange-200 border-orange-700',
   StreetStock: 'bg-gray-800 text-gray-300 border-gray-600',
+  Hypercar: 'bg-purple-900 text-purple-300 border-purple-700',
+  LMP2: 'bg-cyan-900 text-cyan-300 border-cyan-700',
+  LMGT3: 'bg-emerald-900 text-emerald-300 border-emerald-700',
+  GT2: 'bg-teal-900 text-teal-300 border-teal-700',
+  Road: 'bg-slate-800 text-slate-300 border-slate-600',
 };
 
 export default function Home() {
