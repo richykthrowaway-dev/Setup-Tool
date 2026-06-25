@@ -34,7 +34,7 @@ export interface HandlingSymptom {
   priority?: 'quick' | 'advanced';
 }
 
-// ─── Tuning Priority Ladder ──────────────────────────────────────────────────
+// ─── Tuning Priority Ladder ────────────────────────────────────────────
 // Sourced from: iRacing official setup guide, Ferrari/BMW GT3 manuals,
 // VRS setup articles, Coach Dave Academy, and iRacer community guides.
 
@@ -125,7 +125,7 @@ export const CONDITION_NOTES: ConditionNote[] = [
   },
 ];
 
-// ─── Candidate parameter id groups ───────────────────────────────────────────
+// ─── Candidate parameter id groups ────────────────────────────────────────────
 // Multiple ids per group because naming varies across car classes.
 
 const FRONT_ROLL      = ['front_arb', 'front_sway_bar'];
@@ -151,7 +151,7 @@ const FRONT_HS_REBOUND = ['lf_hs_rebound', 'rf_hs_rebound'];
 const REAR_HS_REBOUND  = ['lr_hs_rebound', 'rr_hs_rebound'];
 
 export const handlingSymptoms: HandlingSymptom[] = [
-  // ─── Entry ───────────────────────────────────────────────────────────────
+  // ─── Entry ─────────────────────────────────────────────────────────
 
   {
     id: 'entry_understeer',
@@ -199,14 +199,14 @@ export const handlingSymptoms: HandlingSymptom[] = [
     description:
       'The front wheels lock and the car goes straight on under heavy braking — too much brake force at the front. This is the direct opposite of braking instability and the fastest fix is brake bias.',
     fixes: [
-      { ids: ['brake_bias'],      direction: 'decrease', detail: 'Less front brake bias is the immediate fix — reduce until locking stops. Adjust in the iRacing Black Box.' },
+      { ids: ['brake_bias'],     direction: 'decrease', detail: 'Less front brake bias is the immediate fix — reduce until locking stops. Adjust in the iRacing Black Box.' },
       { ids: ['brake_migration'], direction: 'decrease', detail: 'GTP: less front brake migration reduces front regen braking contribution, easing front lock risk.' },
-      { ids: FRONT_PRESSURE,      direction: 'increase', detail: 'Slightly higher front pressures reduce front tyre flex and can reduce lock tendency, though check for temperature effects.' },
-      { ids: ['diff_coast'],      direction: 'increase', detail: 'Less coast ramp locking reduces engine-braking contribution at the rear, letting brake bias do more work at the front without locking.' },
+      { ids: FRONT_PRESSURE,     direction: 'increase', detail: 'Slightly higher front pressures reduce front tyre flex and can reduce lock tendency, though check for temperature effects.' },
+      { ids: ['diff_coast'],     direction: 'increase', detail: 'Less coast ramp locking reduces engine-braking contribution at the rear, letting brake bias do more work at the front without locking.' },
     ],
   },
 
-  // ─── Mid-corner ──────────────────────────────────────────────────────────
+  // ─── Mid-corner ──────────────────────────────────────────────────
 
   {
     id: 'mid_understeer',
@@ -257,7 +257,7 @@ export const handlingSymptoms: HandlingSymptom[] = [
     ],
   },
 
-  // ─── Exit ─────────────────────────────────────────────────────────────────
+  // ─── Exit ────────────────────────────────────────────────────────────────
 
   {
     id: 'exit_understeer',
@@ -281,18 +281,18 @@ export const handlingSymptoms: HandlingSymptom[] = [
     priority: 'quick',
     description: 'The rear lights up or snaps as you apply power — poor traction on corner exit.',
     fixes: [
-      { ids: ['diff_power'],              direction: 'decrease', detail: 'Smaller power-ramp angle locks the diff more under throttle, distributing traction evenly.' },
-      { ids: FRONT_LS_REBOUND,            direction: 'increase', detail: 'Slower front rebound retains front load longer on exit, preventing balance from snapping to the rear.' },
-      { ids: REAR_LS_BUMP,                direction: 'increase', detail: 'Firmer rear bump resists squat on throttle, reducing rear rotation.' },
-      { ids: REAR_ROLL,                   direction: 'decrease', detail: 'Softer rear ARB adds rear traction on exit.' },
-      { ids: REAR_SPRINGS,                direction: 'decrease', detail: 'Softer rear springs let the rear squat and hook up under power — re-check ride height after.' },
-      { ids: REAR_PRESSURE,               direction: 'decrease', detail: 'Lower rear tyre pressures enlarge the contact patch for traction.' },
-      { ids: ['rear_wing'],               direction: 'increase', detail: 'More rear downforce adds grip for putting power down on exit.' },
+      { ids: ['diff_power'],           direction: 'decrease', detail: 'Smaller power-ramp angle locks the diff more under throttle, distributing traction evenly.' },
+      { ids: FRONT_LS_REBOUND,         direction: 'increase', detail: 'Slower front rebound retains front load longer on exit, preventing balance from snapping to the rear.' },
+      { ids: REAR_LS_BUMP,             direction: 'increase', detail: 'Firmer rear bump resists squat on throttle, reducing rear rotation.' },
+      { ids: REAR_ROLL,                direction: 'decrease', detail: 'Softer rear ARB adds rear traction on exit.' },
+      { ids: REAR_SPRINGS,             direction: 'decrease', detail: 'Softer rear springs let the rear squat and hook up under power — re-check ride height after.' },
+      { ids: REAR_PRESSURE,            direction: 'decrease', detail: 'Lower rear tyre pressures enlarge the contact patch for traction.' },
+      { ids: ['rear_wing'],            direction: 'increase', detail: 'More rear downforce adds grip for putting power down on exit.' },
       { ids: ['motor_map', 'engine_map'], direction: 'decrease', detail: 'GTP: lower motor/engine map softens power delivery and reduces wheelspin threshold.' },
     ],
   },
 
-  // ─── Braking ──────────────────────────────────────────────────────────────
+  // ─── Braking ──────────────────────────────────────────────────────────
 
   {
     id: 'braking_instability',
@@ -311,7 +311,7 @@ export const handlingSymptoms: HandlingSymptom[] = [
     ],
   },
 
-  // ─── Straights ────────────────────────────────────────────────────────────
+  // ─── Straights ─────────────────────────────────────────────────────────
 
   {
     id: 'high_speed_instability',
@@ -329,7 +329,7 @@ export const handlingSymptoms: HandlingSymptom[] = [
     ],
   },
 
-  // ─── Advanced / bump/kerb ─────────────────────────────────────────────────
+  // ─── Advanced / bump/kerb ───────────────────────────────────────────────
 
   {
     id: 'kerb_instability',
