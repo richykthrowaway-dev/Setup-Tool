@@ -1,7 +1,7 @@
 'use client';
 
 import { Setup } from '@/types/setup';
-import { deleteSetup } from '@/lib/setup';
+import { repo } from '@/lib/repository';
 import { schemas } from '@/data/schemas';
 import { formatLapTime, computeLapStats } from '@/lib/laptime';
 import { useState } from 'react';
@@ -33,10 +33,10 @@ export default function SetupList({ setups, onOpen, onDeleted, onCompare }: Prop
     if (a && b) onCompare(a, b);
   };
 
-  const handleDelete = (e: React.MouseEvent, id: string) => {
+  const handleDelete = async (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
     if (confirm('Delete this setup?')) {
-      deleteSetup(id);
+      await repo.remove(id);
       onDeleted();
     }
   };

@@ -17,7 +17,7 @@ export interface SetupRepository {
   deleteLapTime(setupId: string, lapTimeId: string): Promise<Setup>;
 }
 
-// ─── localStorage implementation ─────────────────────────────────────────────────
+// ─── localStorage implementation ─────────────────────────────────────────────
 
 const KEY = 'iracing_setups';
 
@@ -81,5 +81,55 @@ export const localStorageRepository: SetupRepository = {
   },
 };
 
+// ─── API repository (server-backed) ─────────────────────────────────────────
+
+export const apiRepository: SetupRepository = {
+  async list() {
+    const res = await fetch('/api/setups');
+    if (!res.ok) throw new Error('Failed to fetch setups');
+    return res.json();
+  },
+
+  async get(id) {
+    const res = await fetch(`/api/setups/${id}`);
+    if (res.status === 404) return null;
+    if (!res.ok) throw new Error('Failed to fetch setup');
+    return res.json();
+  },
+
+  async save(setup) {
+    const res = await fetch('/api/setups', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(setup),
+    });
+    if (!res.ok) throw new Error('Failed to save setup');
+    return res.json();
+  },
+
+  async remove(id) {
+    const res = await fetch(`/api/setups/${id}`, { method: 'DELETE' });
+    if (!res.ok && res.status !== 404) throw new Error('Failed to delete setup');
+  },
+
+  async addLapTime(setupId, lapTime) {
+    const res = await fetch(`/api/setups/${setupId}/laps`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(lapTime),
+    });
+    if (!res.ok) throw new Error('Failed to add lap time');
+    return res.json();
+  },
+
+  async deleteLapTime(setupId, lapTimeId) {
+    const res = await fetch(`/api/setups/${setupId}/laps/${lapTimeId}`, {
+      method: 'DELETE',
+    });
+    if (!res.ok) throw new Error('Failed to delete lap time');
+    return res.json();
+  },
+};
+
 /** Default repository used throughout the app. */
-export const repo = localStorageRepository;
+export const repo = apiRepository;

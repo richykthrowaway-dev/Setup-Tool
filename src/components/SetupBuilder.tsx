@@ -6,7 +6,8 @@ import ChangesPanel from './ChangesPanel';
 import HandlingGuide from './HandlingGuide';
 import TireTemps from './TireTemps';
 import LapTimePanel from './LapTimePanel';
-import { createSetup, downloadSetup, saveSetup } from '@/lib/setup';
+import { createSetup, downloadSetup } from '@/lib/setup';
+import { repo } from '@/lib/repository';
 import { computeChanges, computeTechViolations } from '@/lib/analysis';
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 
@@ -79,10 +80,11 @@ export default function SetupBuilder({ schema, existingSetup, peerSetups, onSave
     }));
   }, []);
 
-  const handleSave = () => {
-    saveSetup(setup);
+  const handleSave = async () => {
+    const saved = await repo.save(setup);
+    setSetup(saved);
     setSavedBanner(true);
-    onSaved?.(setup);
+    onSaved?.(saved);
     setTimeout(() => setSavedBanner(false), 2500);
   };
 
