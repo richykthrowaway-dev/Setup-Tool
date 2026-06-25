@@ -46,6 +46,7 @@ export default function Home() {
   const [pendingImport, setPendingImport] = useState<Setup[] | null>(null);
   const [selectedGame, setSelectedGame] = useState<string>('iRacing');
   const [gameDropdownOpen, setGameDropdownOpen] = useState(false);
+  const [isDragOver, setIsDragOver] = useState(false);
   const gameDropdownRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -94,6 +95,30 @@ export default function Home() {
   const handleImportFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     e.target.value = '';
+    if (!file) return;
+    try {
+      const text = await readFileAsText(file);
+      const parsed = parseImport(text);
+      setPendingImport(parsed);
+    } catch (err) {
+      const msg = err instanceof SetupImportError ? err.message : 'Import failed.';
+      flash('error', msg);
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    if (!e.currentTarget.contains(e.relatedTarget as Node)) setIsDragOver(false);
+  };
+
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+    const file = e.dataTransfer.files[0];
     if (!file) return;
     try {
       const text = await readFileAsText(file);
@@ -334,7 +359,11 @@ export default function Home() {
         </section>
 
         {/* Saved setups grouped by car class */}
-        <section>
+        <section
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+        >
           <div className="flex items-center justify-between gap-3 mb-4 flex-wrap">
             <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-widest">
               Saved Setups
@@ -342,7 +371,7 @@ export default function Home() {
             <div className="flex items-center gap-2">
               {ioMessage && (
                 <span
-                  className={`text-xs ${
+                  className={`text-xs font-medium ${
                     ioMessage.kind === 'ok' ? 'text-emerald-400' : 'text-red-400'
                   }`}
                 >
@@ -358,32 +387,55 @@ export default function Home() {
               />
               <button
                 onClick={handleImportClick}
-                className="text-xs px-3 py-1.5 bg-gray-800 hover:bg-gray-700 border border-gray-700 text-gray-300 hover:text-gray-100 rounded-lg transition-colors"
+                className="flex items-center gap-1.5 text-sm px-3.5 py-2 bg-gray-800 hover:bg-gray-700 border border-gray-600 text-gray-200 hover:text-white rounded-lg transition-colors font-medium"
+                title="Import setups from a JSON file"
               >
-                Import
+                <svg className="w-4 h-4" viewBox="0 0 16 16" fill="none">
+                  <path d="M8 2v8m0 0L5 7m3 3l3-3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M2 11v1.5A1.5 1.5 0 003.5 14h9a1.5 1.5 0 001.5-1.5V11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                </svg>
+                Upload
               </button>
               <button
                 onClick={handleExportAll}
                 disabled={savedSetups.length === 0}
-                className="text-xs px-3 py-1.5 bg-gray-800 hover:bg-gray-700 border border-gray-700 text-gray-300 hover:text-gray-100 rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-gray-800"
+                className="flex items-center gap-1.5 text-sm px-3.5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-colors font-medium disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-blue-600"
+                title="Download all setups as a JSON backup"
               >
-                Export all
+                <svg className="w-4 h-4" viewBox="0 0 16 16" fill="none">
+                  <path d="M8 10V2m0 8l-3-3m3 3l3-3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M2 11v1.5A1.5 1.5 0 003.5 14h9a1.5 1.5 0 001.5-1.5V11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                </svg>
+                Download all
               </button>
             </div>
           </div>
           {savedSetups.length === 0 ? (
-            <p className="text-gray-500 text-sm text-center py-8">
-              No saved setups yet. Create one above, or{' '}
-              <button
-                onClick={handleImportClick}
-                className="text-blue-400 hover:text-blue-300 underline underline-offset-2"
-              >
-                import from a file
-              </button>
-              .
-            </p>
+            <div
+              className={`border-2 border-dashed rounded-xl py-12 text-center transition-colors ${
+                isDragOver
+                  ? 'border-blue-500 bg-blue-500/5'
+                  : 'border-gray-700 hover:border-gray-600'
+              }`}
+            >
+              <svg className="w-10 h-10 mx-auto mb-3 text-gray-600" viewBox="0 0 24 24" fill="none">
+                <path d="M12 4v10m0-10L9 7m3-3l3 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M4 17v1.5A2.5 2.5 0 006.5 21h11a2.5 2.5 0 002.5-2.5V17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+              </svg>
+              <p className="text-gray-400 text-sm font-medium">No saved setups yet</p>
+              <p className="text-gray-600 text-xs mt-1">
+                Create one above, or{' '}
+                <button
+                  onClick={handleImportClick}
+                  className="text-blue-400 hover:text-blue-300 underline underline-offset-2"
+                >
+                  upload a file
+                </button>
+                {' '}— or drag and drop a .json file here
+              </p>
+            </div>
           ) : (
-            <div className="space-y-8">
+            <div className={`space-y-8 rounded-xl transition-colors ${isDragOver ? 'ring-2 ring-blue-500/50 ring-offset-2 ring-offset-gray-950' : ''}`}>
               {schemasWithSetups.map((schema) => {
                 const colorClass = CLASS_COLORS[schema.class] ?? 'bg-gray-800 text-gray-300 border-gray-600';
                 const carSetups = setupsByCarId.get(schema.id)!;

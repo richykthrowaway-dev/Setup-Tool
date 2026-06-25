@@ -61,7 +61,7 @@ export default function SetupList({ setups, onOpen, onDeleted, onCompare }: Prop
               onClick={handleCompare}
               className="text-xs px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-lg transition-colors"
             >
-              Compare →
+              Compare &rarr;
             </button>
           )}
           {compareMode && (
@@ -139,17 +139,22 @@ export default function SetupList({ setups, onOpen, onDeleted, onCompare }: Prop
                   <div className="flex items-center gap-1">
                     <button
                       onClick={(e) => { e.stopPropagation(); downloadSetup(setup); }}
-                      className="text-gray-600 hover:text-blue-400 text-sm px-2 py-1 rounded transition-colors"
-                      title="Export setup"
+                      className="text-gray-500 hover:text-blue-400 p-1.5 rounded transition-colors"
+                      title="Download setup"
                     >
-                      ↓
+                      <svg className="w-4 h-4" viewBox="0 0 16 16" fill="none">
+                        <path d="M8 10V2m0 8L5.5 7.5M8 10l2.5-2.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M2 11v1.5A1.5 1.5 0 003.5 14h9a1.5 1.5 0 001.5-1.5V11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                      </svg>
                     </button>
                     <button
                       onClick={(e) => handleDelete(e, setup.id)}
-                      className="text-gray-600 hover:text-red-400 text-xs px-2 py-1 rounded transition-colors"
+                      className="text-gray-500 hover:text-red-400 p-1.5 rounded transition-colors"
                       title="Delete setup"
                     >
-                      ✕
+                      <svg className="w-4 h-4" viewBox="0 0 16 16" fill="none">
+                        <path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                      </svg>
                     </button>
                   </div>
                 )}
