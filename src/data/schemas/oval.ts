@@ -6,6 +6,7 @@ const ovalSchema: CarSchema = {
   id: 'oval',
   name: 'NASCAR / Oval',
   class: 'Oval',
+  game: 'iRacing',
   categories: [
     {
       id: 'tires',

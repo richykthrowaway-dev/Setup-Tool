@@ -6,6 +6,7 @@ const streetStockSchema: CarSchema = {
   id: 'streetstock',
   name: 'Street Stock',
   class: 'StreetStock',
+  game: 'iRacing',
   categories: [
     {
       id: 'tires',

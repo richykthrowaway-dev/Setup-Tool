@@ -6,6 +6,7 @@ const lateModelSchema: CarSchema = {
   id: 'latemodel',
   name: 'Late Model Stock',
   class: 'LateModel',
+  game: 'iRacing',
   categories: [
     {
       id: 'tires',

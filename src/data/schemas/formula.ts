@@ -5,6 +5,7 @@ const formulaSchema: CarSchema = {
   id: 'formula',
   name: 'Formula / Open Wheel',
   class: 'Formula',
+  game: 'iRacing',
   categories: [
     tireCategory(12, 26, true),
 
@@ -21,6 +22,7 @@ const formulaSchema: CarSchema = {
           max: 70,
           step: 1,
           defaultValue: 30,
+          techMin: 15,
           description: 'Front chassis ride height. Critical for floor and front wing aero.',
           increaseEffect: 'Higher front ride height reduces front downforce and raises pitch; less understeer aero-mechanically but more pitch-sensitive.',
         },
@@ -112,6 +114,7 @@ const formulaSchema: CarSchema = {
           max: 80,
           step: 1,
           defaultValue: 50,
+          techMin: 25,
           description: 'Rear chassis ride height. Rear height affects diffuser and rear wing efficiency.',
           increaseEffect: 'Higher rear height reduces diffuser effectiveness; shifts aero balance forward.',
         },

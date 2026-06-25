@@ -6,6 +6,7 @@ const gtpSchema: CarSchema = {
   id: 'gtp',
   name: 'GTP / Prototype',
   class: 'GTP',
+  game: 'iRacing',
   categories: [
     tireCategory(16, 32, true),
 
