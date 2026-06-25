@@ -1,7 +1,7 @@
 'use client';
 
 import { CarSchema, SetupValues } from '@/types/setup';
-import { handlingSymptoms, HandlingSymptom } from '@/data/handling';
+import { handlingSymptoms, HandlingSymptom, TUNING_PRIORITY, CONDITION_NOTES } from '@/data/handling';
 import { flattenParams, resolveAdjustments } from '@/lib/analysis';
 import { useMemo, useState } from 'react';
 
@@ -22,8 +22,9 @@ const PHASE_COLORS: Record<HandlingSymptom['phase'], string> = {
 export default function HandlingGuide({ schema, values, onChange }: Props) {
   const params = useMemo(() => flattenParams(schema), [schema]);
   const [openId, setOpenId] = useState<string | null>(null);
+  const [priorityOpen, setPriorityOpen] = useState(false);
+  const [conditionsOpen, setConditionsOpen] = useState(false);
 
-  // Only show symptoms that have at least one fix applicable to this car.
   const symptoms = useMemo(
     () =>
       handlingSymptoms
@@ -42,6 +43,82 @@ export default function HandlingGuide({ schema, values, onChange }: Props) {
         can be applied in one step — apply, re-test, repeat.
       </p>
 
+      {/* ── Tuning Priority Ladder ── */}
+      <div className="bg-gray-900 border border-gray-700 rounded-xl overflow-hidden">
+        <button
+          onClick={() => setPriorityOpen((v) => !v)}
+          className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-gray-800/50 transition-colors"
+        >
+          <span className="text-xs font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full border bg-blue-500/15 text-blue-300 border-blue-500/30 flex-shrink-0">
+            Where to start
+          </span>
+          <span className="flex-1 text-sm font-medium text-gray-100">
+            Tuning Priority Guide
+          </span>
+          <span className="text-gray-500 text-xs flex-shrink-0">{priorityOpen ? '▲' : '▼'}</span>
+        </button>
+
+        {priorityOpen && (
+          <div className="px-4 pb-4 pt-1 border-t border-gray-800 space-y-3">
+            <p className="text-xs text-gray-400 leading-relaxed pt-2">
+              The official iRacing setup guide calls tire pressure the most powerful single change.
+              Work through this order — change one thing at a time and log the result before moving on.
+            </p>
+            <div className="space-y-2">
+              {TUNING_PRIORITY.map((step) => (
+                <div key={step.rank} className="flex items-start gap-3 bg-gray-800/40 rounded-lg px-3 py-2.5">
+                  <span className="text-lg font-black text-gray-600 w-6 flex-shrink-0 leading-tight">
+                    {step.rank}
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-sm font-semibold text-gray-100">{step.label}</span>
+                      <span className="text-[10px] text-gray-500 font-medium">{step.phase}</span>
+                    </div>
+                    <p className="text-xs text-gray-400 mt-1 leading-relaxed">{step.detail}</p>
+                    <p className="text-[10px] text-blue-400 mt-1 leading-relaxed">
+                      Step size: {step.stepNote}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* ── Condition Notes ── */}
+      <div className="bg-gray-900 border border-gray-700 rounded-xl overflow-hidden">
+        <button
+          onClick={() => setConditionsOpen((v) => !v)}
+          className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-gray-800/50 transition-colors"
+        >
+          <span className="text-xs font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full border bg-amber-500/15 text-amber-300 border-amber-500/30 flex-shrink-0">
+            Conditions
+          </span>
+          <span className="flex-1 text-sm font-medium text-gray-100">
+            Wet, Qualifying &amp; Race Setup Notes
+          </span>
+          <span className="text-gray-500 text-xs flex-shrink-0">{conditionsOpen ? '▲' : '▼'}</span>
+        </button>
+
+        {conditionsOpen && (
+          <div className="px-4 pb-4 pt-1 border-t border-gray-800 space-y-2">
+            <p className="text-xs text-gray-400 leading-relaxed pt-2">
+              The same car behaves very differently in rain, at race fuel, or on a fast qualifying lap.
+              These notes are verified against iRacing official rain Q&amp;A, GT3 manuals, and VRS guidance.
+            </p>
+            {CONDITION_NOTES.map((note) => (
+              <div key={note.label} className="bg-gray-800/40 rounded-lg px-3 py-2.5">
+                <p className="text-sm font-semibold text-gray-100 mb-1">{note.label}</p>
+                <p className="text-xs text-gray-400 leading-relaxed">{note.detail}</p>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* ── Symptom List ── */}
       <div className="space-y-2">
         {symptoms.map(({ symptom, fixes }) => {
           const open = openId === symptom.id;
@@ -62,6 +139,11 @@ export default function HandlingGuide({ schema, values, onChange }: Props) {
                 <span className="flex-1 text-sm font-medium text-gray-100">
                   {symptom.label}
                 </span>
+                {symptom.priority === 'advanced' && (
+                  <span className="text-[10px] font-medium text-gray-500 border border-gray-700 rounded-full px-2 py-0.5 flex-shrink-0">
+                    Advanced
+                  </span>
+                )}
                 <span className="text-gray-500 text-xs flex-shrink-0">{open ? '▲' : '▼'}</span>
               </button>
 
