@@ -8,18 +8,21 @@ import TireTemps from './TireTemps';
 import LapTimePanel from './LapTimePanel';
 import { createSetup, downloadSetup, saveSetup } from '@/lib/setup';
 import { computeChanges, computeTechViolations } from '@/lib/analysis';
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 
 type Tab = 'tune' | 'changes' | 'handling' | 'tiretemps' | 'laptimes';
 
 interface Props {
   schema: CarSchema;
   existingSetup?: Setup;
+  /** Other saved setups for the same car — used to populate the Compare dropdown. */
+  peerSetups?: Setup[];
   onSaved?: (setup: Setup) => void;
   onBack?: () => void;
+  onCompare?: (a: Setup, b: Setup) => void;
 }
 
-export default function SetupBuilder({ schema, existingSetup, onSaved, onBack }: Props) {
+export default function SetupBuilder({ schema, existingSetup, peerSetups, onSaved, onBack, onCompare }: Props) {
   const [setup, setSetup] = useState<Setup>(() => {
     if (existingSetup) return existingSetup;
     return createSetup(schema.id, `New ${schema.name} Setup`, schema);
@@ -27,10 +30,24 @@ export default function SetupBuilder({ schema, existingSetup, onSaved, onBack }:
   const [savedBanner, setSavedBanner] = useState(false);
   const [tab, setTab] = useState<Tab>('tune');
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [compareOpen, setCompareOpen] = useState(false);
+  const compareRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (existingSetup) setSetup(existingSetup);
   }, [existingSetup]);
+
+  // Close compare dropdown when clicking outside
+  useEffect(() => {
+    if (!compareOpen) return;
+    const handler = (e: MouseEvent) => {
+      if (compareRef.current && !compareRef.current.contains(e.target as Node)) {
+        setCompareOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [compareOpen]);
 
   const changes = useMemo(
     () => computeChanges(schema, setup.values),
@@ -118,6 +135,44 @@ export default function SetupBuilder({ schema, existingSetup, onSaved, onBack }:
             >
               Changes{changes.length > 0 ? ` (${changes.length})` : ''}{violationCount > 0 ? ' ⚠' : ''}
             </button>
+
+            {/* Compare dropdown — only shown when there are peer setups */}
+            {onCompare && peerSetups && peerSetups.length > 0 && (
+              <div className="relative" ref={compareRef}>
+                <button
+                  onClick={() => setCompareOpen((v) => !v)}
+                  className={`px-3 py-1.5 text-sm rounded-lg border transition-colors ${
+                    compareOpen
+                      ? 'bg-emerald-700 border-emerald-600 text-white'
+                      : 'bg-gray-800 border-gray-700 hover:bg-gray-700 text-gray-300 hover:text-gray-100'
+                  }`}
+                >
+                  Compare ▾
+                </button>
+                {compareOpen && (
+                  <div className="absolute right-0 top-full mt-1 z-50 bg-gray-900 border border-gray-700 rounded-xl shadow-xl w-56 overflow-hidden">
+                    <p className="px-3 py-2 text-[10px] text-gray-500 uppercase tracking-widest border-b border-gray-800">
+                      Compare with…
+                    </p>
+                    <div className="max-h-52 overflow-y-auto divide-y divide-gray-800/60">
+                      {peerSetups.map((peer) => (
+                        <button
+                          key={peer.id}
+                          onClick={() => { setCompareOpen(false); onCompare(setup, peer); }}
+                          className="w-full text-left px-3 py-2.5 hover:bg-gray-800 transition-colors"
+                        >
+                          <p className="text-sm text-gray-200 font-medium truncate">{peer.name}</p>
+                          {peer.track && (
+                            <p className="text-xs text-gray-500 truncate mt-0.5">{peer.track}</p>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
             <button
               onClick={() => downloadSetup(setup)}
               className="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-gray-300 text-sm rounded-lg transition-colors"
