@@ -829,4 +829,302 @@ export const knowledgeEntries: KnowledgeEntry[] = [
     ],
   },
 
+  // ─── FUNDAMENTALS (CONTINUED) ─────────────────────────────────────────────
+
+  {
+    id: 'professional-setup-loop',
+    category: 'fundamentals',
+    title: 'The Professional Setup Loop',
+    subtitle: 'Hypothesis → change → test → data → keep or revert. Not: feel different → assume better.',
+    tags: ['process', 'hypothesis', 'test', 'discipline', 'validation', 'change one thing', 'professional'],
+    blocks: [
+      {
+        type: 'table',
+        headers: ['Step', 'Question to Answer', 'Example'],
+        rows: [
+          ['1. Define the symptom', 'What exactly is wrong?', '"Loose on brake release into slow corners."'],
+          ['2. Define the phase', 'Braking, entry, mid, exit, high-speed, kerb, long run?', 'Entry / brake release.'],
+          ['3. Pick the least invasive tool', 'Which change targets only that phase?', 'Brake bias forward or more coast locking.'],
+          ['4. Make one change', 'Did you isolate the variable?', 'Brake bias +0.4% front only.'],
+          ['5. Retest same conditions', 'Same fuel, tires, line, brake marker?', '5-lap run, same weather.'],
+          ['6. Verify with data', 'Did lap time, steering, brake trace, or tires improve?', 'Less steering correction and better minimum speed.'],
+          ['7. Keep, revert, or refine', 'Was the result faster, safer, and repeatable?', 'Keep if average lap improves — not just best lap.'],
+        ],
+      },
+      {
+        type: 'text',
+        body: 'A change is "better" only if it improves: average lap time (not just best), repeatability, tire behavior, confidence under pressure, and raceability around other cars.',
+      },
+    ],
+  },
+
+  // ─── ADVANCED (CONTINUED) ─────────────────────────────────────────────────
+
+  {
+    id: 'tire-load-sensitivity',
+    category: 'advanced',
+    title: 'Tire Load Sensitivity',
+    subtitle: 'A tire does not gain grip linearly with load. More load ≠ proportionally more grip.',
+    tags: ['load sensitivity', 'load transfer', 'axle grip', 'stiffer', 'softer', 'ARB', 'spring', 'grip'],
+    blocks: [
+      {
+        type: 'text',
+        body: 'Adding vertical load increases total grip, but not in perfect proportion. If one tire gets overloaded and the opposite gets unloaded, the axle can lose total grip even though the outside tire has more load. This is why load distribution matters — not just total load.',
+      },
+      {
+        type: 'table',
+        headers: ['Setup Item', 'Load-Sensitivity Effect'],
+        rows: [
+          ['Stiffer front ARB', 'More lateral load transfer across front axle → usually less total front grip'],
+          ['Stiffer rear ARB', 'More lateral load transfer across rear axle → usually less total rear grip'],
+          ['Softer springs / ARBs', 'Often improve mechanical grip but may reduce aero platform support'],
+          ['Aero downforce', 'Adds vertical load without adding mass, but changes with speed and ride height'],
+        ],
+      },
+      {
+        type: 'text',
+        body: 'Why softening gains grip: a stiffer end increases load transfer across that axle, which reduces total axle grip due to load sensitivity. Softening that end redistributes load more evenly — both tires stay closer to their grip peak. Aero cars still need some stiffness to keep the floor and wings in their operating window.',
+      },
+    ],
+  },
+
+  {
+    id: 'suspension-geometry',
+    category: 'advanced',
+    title: 'Suspension Geometry Concepts',
+    subtitle: 'Roll centers, anti-dive, anti-squat, Ackermann, and bump steer — not always exposed in the garage but always present.',
+    tags: ['roll center', 'anti-dive', 'anti-squat', 'Ackermann', 'bump steer', 'geometry', 'kinematics', 'toe change'],
+    blocks: [
+      {
+        type: 'table',
+        headers: ['Concept', 'What It Means', 'Practical Effect'],
+        rows: [
+          ['Roll center', 'Geometric point the chassis rolls around', 'Affects lateral load transfer and how the car responds in roll'],
+          ['Anti-dive', 'Suspension geometry resisting front dive under braking', 'More anti-dive stabilizes braking but can reduce compliance'],
+          ['Anti-squat', 'Rear geometry resisting squat under throttle', 'More anti-squat sharpens traction response but can hurt compliance'],
+          ['Ackermann', 'Difference between inside and outside front steering angles', 'Affects slow-corner rotation and front tire scrub'],
+          ['Bump steer', 'Toe change as suspension compresses or extends', 'Can cause instability over bumps, kerbs, braking, or compression zones'],
+        ],
+      },
+      {
+        type: 'text',
+        body: 'iRacing does not expose these directly, but you compensate for their effects via ride height, toe, springs, dampers, and ARBs. Symptoms like instability over compressions, weird behavior after ride-height changes, or harsh kerb response may be related to underlying kinematics — not just damper tuning.',
+      },
+    ],
+  },
+
+  // ─── STRATEGY (CONTINUED) ─────────────────────────────────────────────────
+
+  {
+    id: 'telemetry-workflow',
+    category: 'strategy',
+    title: 'Telemetry Workflow',
+    subtitle: 'Which channels to check and how to compare runs correctly.',
+    tags: ['telemetry', 'ibt', 'Alt+L', 'ATLAS', 'MoTeC', 'delta', 'brake trace', 'throttle', 'channels', 'data'],
+    blocks: [
+      {
+        type: 'text',
+        body: 'Press Alt+L in iRacing to arm telemetry logging. Review .ibt files with McLaren ATLAS, VRS telemetry, Garage61, or similar tools. Use telemetry to confirm feel — not to replace it.',
+      },
+      {
+        type: 'table',
+        headers: ['Channel', 'What It Tells You'],
+        rows: [
+          ['Lap delta', 'Where time is won or lost on the lap'],
+          ['Brake trace', 'Whether instability is setup or brake-release technique'],
+          ['Throttle trace', 'Whether exit oversteer is setup or throttle timing'],
+          ['Minimum speed', 'Whether rotation and cornering speed improved'],
+          ['Steering angle', 'More steering for the same speed usually means more understeer'],
+          ['ABS activity / wheel lock', 'Whether front or rear is the braking limit'],
+          ['TC activity / wheelspin', 'Distinguishes rear grip problems from throttle aggression'],
+          ['Hot pressure build', 'Which tires are doing disproportionate work'],
+          ['Inside/middle/outside tire temps', 'Helps interpret pressure, camber, and sliding'],
+          ['Front/rear ride-height traces', 'Whether aero platform is stable at speed (essential on formula/prototype)'],
+        ],
+      },
+      {
+        type: 'list',
+        items: [
+          { label: 'Compare correctly', detail: 'Best clean lap vs best clean lap — not best vs worst.' },
+          { label: 'Match conditions', detail: 'Same fuel level, same tire age, same weather, same track state.' },
+          { label: 'Use averages', detail: 'Average of 5 laps before vs 5 laps after is more meaningful than one lap.' },
+          { label: 'Check delta first', detail: 'The delta trace immediately shows which corners gained or lost time.' },
+        ],
+      },
+    ],
+  },
+
+  {
+    id: 'track-evolution',
+    category: 'strategy',
+    title: 'Track Conditions & Evolution',
+    subtitle: 'Track temperature, rubber level, and weather all shift the optimal setup.',
+    tags: ['track evolution', 'track temp', 'rubber', 'green track', 'rubbered in', 'hot', 'cold', 'grip level', 'conditions'],
+    blocks: [
+      {
+        type: 'table',
+        headers: ['Condition', 'Likely Setup Direction'],
+        rows: [
+          ['Hot track / high ambient temp', 'More sliding, higher pressures, more tire management needed'],
+          ['Cold track / low ambient temp', 'More grip potential but slower warmup — be careful cold'],
+          ['Green / unrubbered track', 'More conservative setup, more TC/stability, gentler inputs'],
+          ['Rubbered-in track', 'More aggressive rotation may be usable, pressures may need adjustment'],
+          ['Wet track', 'Wet tires first, wet ABS/TC maps, rearward brake bias, drive off the rubbered line'],
+          ['Drying track', 'Watch wet tire overheating — plan crossover timing carefully'],
+          ['Mixed conditions', 'Prioritize stability over peak dry speed'],
+        ],
+      },
+      {
+        type: 'text',
+        body: 'In the wet, the rubbered racing line has the most standing water — drive slightly off it. As the track dries, wet tires overheat and wear rapidly. Monitor tire temps and be ready to switch before the tires deteriorate.',
+      },
+    ],
+  },
+
+  {
+    id: 'garage-checklist',
+    category: 'strategy',
+    title: 'Garage Checklist Before Saving a Setup',
+    subtitle: 'Run through this before locking in any variant.',
+    tags: ['checklist', 'save', 'tech', 'legal', 'ride height', 'pressure', 'fuel', 'gearing', 'wet variant'],
+    blocks: [
+      {
+        type: 'list',
+        items: [
+          { label: 'Correct fuel load', detail: 'Sprint, qualifying, or race fuel matched to session type.' },
+          { label: 'Correct tire compound', detail: 'Dry or wet matched to current conditions.' },
+          { label: 'Legal ride heights', detail: 'Passes tech at target fuel and tire combination.' },
+          { label: 'No bottoming in key compressions', detail: 'Tested at speed over full-fuel bumps.' },
+          { label: 'Hot pressures in target window', detail: 'Confirmed after stabilization run.' },
+          { label: 'Brake bias safe for race conditions', detail: 'Not tuned for qualifying-only fuel load.' },
+          { label: 'TC / ABS maps appropriate', detail: 'Dry map for dry, wet map for wet.' },
+          { label: 'Gearing does not hit limiter too early', detail: 'Check longest straight at expected conditions.' },
+          { label: 'Car stable on full-fuel braking', detail: 'Setup tested at race fuel, not just low fuel.' },
+          { label: 'Kerbs tested if race line uses them', detail: 'Platform safe over aggressive kerbs.' },
+          { label: 'Traffic / dirty air tested if relevant', detail: 'Stable under dirty air in multiclass or close racing.' },
+          { label: 'Qualifying and race variants saved separately', detail: 'Do not overwrite your race setup with a qualifier.' },
+          { label: 'Wet variant saved if rain is possible', detail: 'Have a ready wet setup before the session starts.' },
+          { label: 'Notes written', detail: 'What changed, why, and what the result was.' },
+        ],
+      },
+    ],
+  },
+
+  // ─── CAR CLASSES (CONTINUED) ──────────────────────────────────────────────
+
+  {
+    id: 'tcr-fwd-notes',
+    category: 'car-classes',
+    title: 'TCR / Front-Wheel Drive Setup Notes',
+    subtitle: 'FWD cars demand front tire protection above all else — the front tires do everything.',
+    tags: ['TCR', 'FWD', 'front wheel drive', 'front tires', 'trail braking', 'rear ARB', 'rotation', 'exit traction'],
+    blocks: [
+      {
+        type: 'list',
+        items: [
+          { label: 'Fix order', detail: 'Tire pressures → Brake bias → Front toe → Rear ARB → Camber → Springs → Dampers → TC' },
+          { label: 'Front tires do everything', detail: 'They brake, turn, AND drive. Managing their temperature and load budget is the entire setup challenge.' },
+          { label: 'Trail braking is often key to rotation', detail: 'Rotating the car on the way in is critical because the front cannot push the car AND rotate it at the same time.' },
+          { label: 'Rear ARB for rotation', detail: 'Stiffening the rear ARB can help the car rotate by reducing rear grip in roll — essential in slower corners.' },
+          { label: 'Exit traction', detail: 'Too much steering angle on throttle kills front tires instantly. Straighten before applying power.' },
+          { label: 'Brake bias', detail: 'More rearward than rear-drive cars helps rotate and reduces front lock risk — fronts are easily overloaded.' },
+          { label: 'Camber', detail: 'Front negative camber is critical for lateral grip — but too much hurts braking and traction.' },
+        ],
+      },
+    ],
+  },
+
+  // ─── TROUBLESHOOTING (CONTINUED) ──────────────────────────────────────────
+
+  {
+    id: 'case-study-gt3-entry-exit',
+    category: 'troubleshooting',
+    title: 'Case Study: GT3 Loose Entry → Tight Exit',
+    subtitle: 'A common trap: fixing entry by moving bias forward creates a new exit problem.',
+    tags: ['case study', 'GT3', 'loose entry', 'tight exit', 'brake bias', 'rear toe', 'diff', 'example'],
+    blocks: [
+      {
+        type: 'list',
+        items: [
+          { label: 'Symptom', detail: 'Rear moves under trail braking. Driver moves brake bias forward to fix it. Now the car is stable on entry but pushes badly on exit.' },
+          { label: 'Why this happens', detail: 'Moving bias forward stabilized the rear but removed rotation — now the front is overloaded on throttle.' },
+        ],
+      },
+      {
+        type: 'table',
+        headers: ['Step', 'Action', 'Why'],
+        rows: [
+          ['1', 'Move brake bias forward only enough to stop the rear instability', 'Do not over-correct — find the minimum effective amount'],
+          ['2', 'Add small rear toe-in for entry stability', 'Takes some of the work away from brake bias'],
+          ['3', 'Move brake bias slightly back again if car became too tight', 'Toe-in allows recovering some rotation via bias'],
+          ['4', 'Soften rear ARB only if rear instability remains', 'Adds rear mechanical grip without affecting brake balance'],
+          ['5', 'Reduce diff preload or power locking if exit push is diff-related', 'Too much diff can cause throttle understeer in slow corners'],
+          ['6', 'Check front tire temps for overheating', 'If fronts are overheating, the car has been understeering into them'],
+        ],
+      },
+      {
+        type: 'text',
+        body: 'Lesson: entry and exit are linked. A single fix rarely solves both. Use the minimum change at each end and test after each step.',
+      },
+    ],
+  },
+
+  {
+    id: 'case-study-formula-platform',
+    category: 'troubleshooting',
+    title: 'Case Study: Formula Car Fast Slowly, Scary Fast',
+    subtitle: 'Great in hairpins, nervous at speed — a platform problem, not a slow-corner fix.',
+    tags: ['case study', 'formula', 'aero platform', 'high speed', 'bottoming', 'heave spring', 'third spring', 'scary', 'rake'],
+    blocks: [
+      {
+        type: 'list',
+        items: [
+          { label: 'Symptom', detail: 'Excellent in slow corners. Nervous and snappy in fast sweepers. Bottoms over compressions. Rear moves at high speed.' },
+          { label: 'Wrong diagnosis', detail: '"The car is loose — soften the rear ARB / add rear toe." These fix slow-corner rear grip, not the aero platform.' },
+          { label: 'Correct diagnosis', detail: 'This is an aero platform collapse at speed. The rear is losing downforce or the floor is stalling.' },
+        ],
+      },
+      {
+        type: 'table',
+        headers: ['Step', 'Action', 'Why'],
+        rows: [
+          ['1', 'Add rear wing or reduce rake', 'Adds rear aero stability without touching mechanical balance'],
+          ['2', 'Raise ride height if bottoming', 'Nothing else is valid if the car is hitting the ground'],
+          ['3', 'Increase heave/third spring support', 'Holds the aero platform at speed without stiffening corner springs'],
+          ['4', 'Check high-speed damping over compressions', 'Excessive HS compression lets the floor strike suddenly'],
+          ['5', 'Recheck slow-corner balance after platform change', 'Aero changes can shift the balance even in slow corners'],
+          ['6', 'If slow corners become tight, recover rotation with ARB or diff', 'Do not ruin the aero platform to fix a slow-corner symptom'],
+        ],
+      },
+    ],
+  },
+
+  {
+    id: 'case-study-prototype-traffic',
+    category: 'troubleshooting',
+    title: 'Case Study: Prototype Stable Alone, Unstable in Traffic',
+    subtitle: 'A setup too dependent on clean aero — needs more mechanical stability margin.',
+    tags: ['case study', 'prototype', 'GTP', 'dirty air', 'traffic', 'multiclass', 'aero dependency', 'understeer'],
+    blocks: [
+      {
+        type: 'list',
+        items: [
+          { label: 'Symptom', detail: 'Stable and fast in clean air. Understeers when following another car closely. Snaps off-line when leaving the rubbered surface.' },
+          { label: 'Root cause', detail: 'The setup is aero-dependent — clean-air downforce is required to hold the car in balance. Remove the aero (dirty air, different line) and balance falls apart.' },
+        ],
+      },
+      {
+        type: 'table',
+        headers: ['Step', 'Action', 'Why'],
+        rows: [
+          ['1', 'Add small rear stability margin (rear wing or toe-in)', 'Reduces the aero sensitivity of the balance'],
+          ['2', 'Avoid ultra-low-drag / high-rake setups for race conditions', 'These setups need clean air to work — dangerous in traffic'],
+          ['3', 'Increase mechanical front response enough to help dirty-air understeer', 'Front toe or ARB adjustment adds response that doesn\'t depend on aero'],
+          ['4', 'Use brake bias and migration/maps for traffic braking zones', 'Traffic changes braking reference points — setup must tolerate this'],
+          ['5', 'Test in AI or multiplayer traffic, not only solo hotlap mode', 'A solo setup and a race setup are often not the same car'],
+        ],
+      },
+    ],
+  },
+
 ];
