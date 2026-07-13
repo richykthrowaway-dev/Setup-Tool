@@ -46,6 +46,7 @@ export const hardwareTemplateSchema = z.object({
   controls: z.array(controlObjectSchema),
   version: z.number().int().positive(),
   creatorId: z.string().optional(),
+  isPublic: z.boolean().optional(),
   createdAt: z.string(),
   updatedAt: z.string(),
 })

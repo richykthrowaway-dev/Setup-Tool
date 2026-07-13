@@ -65,6 +65,7 @@ export function createHardwareTemplate(params: {
     imageHeight: params.imageHeight,
     controls: [],
     version: 1,
+    isPublic: false,
     createdAt: now,
     updatedAt: now,
   }

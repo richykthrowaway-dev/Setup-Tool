@@ -28,7 +28,7 @@ export class LocalStorageAdapter implements StorageAdapter {
     return readList<HardwareTemplate>(TEMPLATES_KEY).find((t) => t.id === id)
   }
 
-  async saveTemplate(template: HardwareTemplate): Promise<void> {
+  async saveTemplate(template: HardwareTemplate): Promise<HardwareTemplate> {
     const templates = readList<HardwareTemplate>(TEMPLATES_KEY)
     const index = templates.findIndex((t) => t.id === template.id)
     if (index >= 0) {
@@ -37,6 +37,7 @@ export class LocalStorageAdapter implements StorageAdapter {
       templates.push(template)
     }
     writeList(TEMPLATES_KEY, templates)
+    return template
   }
 
   async deleteTemplate(id: string): Promise<void> {

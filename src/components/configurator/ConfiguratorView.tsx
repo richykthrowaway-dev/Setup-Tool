@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useLibraryStore } from '../../store/libraryStore'
 import { useProfileStore } from '../../store/profileStore'
 import { HardwareCanvas } from '../canvas/HardwareCanvas'
@@ -10,7 +11,12 @@ import {
   ImportValidationError,
 } from '../../services/io/exportImport'
 
-export function ConfiguratorView() {
+interface ConfiguratorViewProps {
+  /** Preselects the hardware template, e.g. when arriving from a dashboard "Configure" link. */
+  initialTemplateId?: string
+}
+
+export function ConfiguratorView({ initialTemplateId }: ConfiguratorViewProps) {
   const templates = useLibraryStore((s) => s.templates)
   const refreshTemplates = useLibraryStore((s) => s.refreshTemplates)
   const profiles = useLibraryStore((s) => s.profiles)
@@ -24,8 +30,9 @@ export function ConfiguratorView() {
   const setBinding = useProfileStore((s) => s.setBinding)
   const removeBinding = useProfileStore((s) => s.removeBinding)
   const saveProfile = useProfileStore((s) => s.saveProfile)
+  const saveError = useProfileStore((s) => s.saveError)
 
-  const [selectedTemplateId, setSelectedTemplateId] = useState('')
+  const [selectedTemplateId, setSelectedTemplateId] = useState(initialTemplateId ?? '')
   const [selectedControlId, setSelectedControlId] = useState<string | null>(null)
   const [importError, setImportError] = useState<string | null>(null)
   const importInputRef = useRef<HTMLInputElement>(null)
@@ -33,6 +40,10 @@ export function ConfiguratorView() {
   useEffect(() => {
     refreshTemplates()
   }, [refreshTemplates])
+
+  useEffect(() => {
+    if (initialTemplateId) setSelectedTemplateId(initialTemplateId)
+  }, [initialTemplateId])
 
   useEffect(() => {
     if (selectedTemplateId) refreshProfiles(selectedTemplateId)
@@ -64,8 +75,11 @@ export function ConfiguratorView() {
 
   if (templates.length === 0) {
     return (
-      <div className="mx-auto max-w-md py-16 text-center text-sm text-slate-400">
-        No hardware templates yet. Switch to Template Creator mode to build one first.
+      <div className="mx-auto flex max-w-md flex-col items-center gap-3 py-16 text-center text-sm text-slate-400">
+        <p>No hardware templates yet. Create one first.</p>
+        <Link to="/creator/new" className="text-cyan-400 underline">
+          Go to Template Creator
+        </Link>
       </div>
     )
   }
@@ -183,6 +197,7 @@ export function ConfiguratorView() {
                 {profile.bindings.length} / {template.controls.length} bound
               </span>
             </div>
+            {saveError && <p className="text-sm text-red-400">{saveError}</p>}
           </>
         )}
         <input ref={importInputRef} type="file" accept="application/json" className="hidden" onChange={handleImportFile} />

@@ -5,6 +5,7 @@ import type { UserProfile } from '../types/models'
 
 interface ProfileState {
   profile: UserProfile | null
+  saveError: string | null
 
   startNewProfile: (params: {
     hardwareTemplateId: string
@@ -31,6 +32,7 @@ interface ProfileState {
 
 export const useProfileStore = create<ProfileState>((set, get) => ({
   profile: null,
+  saveError: null,
 
   startNewProfile: (params) => set({ profile: createUserProfile(params) }),
 
@@ -71,6 +73,11 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
   saveProfile: async () => {
     const { profile } = get()
     if (!profile) return
-    await storage.saveProfile(profile)
+    set({ saveError: null })
+    try {
+      await storage.saveProfile(profile)
+    } catch (err) {
+      set({ saveError: err instanceof Error ? err.message : 'Failed to save profile.' })
+    }
   },
 }))

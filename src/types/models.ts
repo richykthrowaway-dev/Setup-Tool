@@ -71,6 +71,8 @@ export interface HardwareTemplate {
   controls: ControlObject[]
   version: number
   creatorId?: string
+  /** Visible to other users in the community gallery. Ignored in local demo mode. */
+  isPublic?: boolean
   createdAt: string
   updatedAt: string
 }

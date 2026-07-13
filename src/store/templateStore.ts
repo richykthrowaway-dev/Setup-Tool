@@ -6,6 +6,7 @@ import type { ControlObject, ControlType, HardwareTemplate } from '../types/mode
 interface TemplateState {
   template: HardwareTemplate | null
   selectedControlId: string | null
+  saveError: string | null
 
   startNewTemplate: (params: {
     manufacturer: string
@@ -19,6 +20,7 @@ interface TemplateState {
   clearTemplate: () => void
 
   updateMeta: (partial: Partial<HardwareTemplate['meta']>) => void
+  setIsPublic: (isPublic: boolean) => void
 
   addControl: (type: ControlType, position: { x: number; y: number }) => string
   updateControl: (id: string, partial: Partial<Omit<ControlObject, 'id'>>) => void
@@ -31,6 +33,7 @@ interface TemplateState {
 export const useTemplateStore = create<TemplateState>((set, get) => ({
   template: null,
   selectedControlId: null,
+  saveError: null,
 
   startNewTemplate: (params) => {
     const template = createHardwareTemplate(params)
@@ -51,6 +54,12 @@ export const useTemplateStore = create<TemplateState>((set, get) => ({
         updatedAt: new Date().toISOString(),
       },
     })
+  },
+
+  setIsPublic: (isPublic) => {
+    const { template } = get()
+    if (!template) return
+    set({ template: { ...template, isPublic, updatedAt: new Date().toISOString() } })
   },
 
   addControl: (type, position) => {
@@ -98,12 +107,17 @@ export const useTemplateStore = create<TemplateState>((set, get) => ({
   saveTemplate: async () => {
     const { template } = get()
     if (!template) return
-    const saved: HardwareTemplate = {
+    set({ saveError: null })
+    const candidate: HardwareTemplate = {
       ...template,
       version: template.version + 1,
       updatedAt: new Date().toISOString(),
     }
-    await storage.saveTemplate(saved)
-    set({ template: saved })
+    try {
+      const saved = await storage.saveTemplate(candidate)
+      set({ template: saved })
+    } catch (err) {
+      set({ saveError: err instanceof Error ? err.message : 'Failed to save template.' })
+    }
   },
 }))
