@@ -1,0 +1,230 @@
+import { useEffect, useRef, useState } from 'react'
+import { useLibraryStore } from '../../store/libraryStore'
+import { useProfileStore } from '../../store/profileStore'
+import { HardwareCanvas } from '../canvas/HardwareCanvas'
+import { BindingPanel } from './BindingPanel'
+import { Field } from '../shared/Field'
+import {
+  exportUserProfile,
+  importUserProfile,
+  ImportValidationError,
+} from '../../services/io/exportImport'
+
+export function ConfiguratorView() {
+  const templates = useLibraryStore((s) => s.templates)
+  const refreshTemplates = useLibraryStore((s) => s.refreshTemplates)
+  const profiles = useLibraryStore((s) => s.profiles)
+  const refreshProfiles = useLibraryStore((s) => s.refreshProfiles)
+
+  const profile = useProfileStore((s) => s.profile)
+  const startNewProfile = useProfileStore((s) => s.startNewProfile)
+  const loadProfile = useProfileStore((s) => s.loadProfile)
+  const clearProfile = useProfileStore((s) => s.clearProfile)
+  const updateMeta = useProfileStore((s) => s.updateMeta)
+  const setBinding = useProfileStore((s) => s.setBinding)
+  const removeBinding = useProfileStore((s) => s.removeBinding)
+  const saveProfile = useProfileStore((s) => s.saveProfile)
+
+  const [selectedTemplateId, setSelectedTemplateId] = useState('')
+  const [selectedControlId, setSelectedControlId] = useState<string | null>(null)
+  const [importError, setImportError] = useState<string | null>(null)
+  const importInputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    refreshTemplates()
+  }, [refreshTemplates])
+
+  useEffect(() => {
+    if (selectedTemplateId) refreshProfiles(selectedTemplateId)
+  }, [selectedTemplateId, refreshProfiles])
+
+  const template = templates.find((t) => t.id === selectedTemplateId) ?? null
+  const templateProfiles = profiles.filter((p) => p.hardwareTemplateId === selectedTemplateId)
+  const selectedControl = template?.controls.find((c) => c.id === selectedControlId) ?? null
+  const selectedBinding = profile?.bindings.find((b) => b.controlId === selectedControlId)
+
+  async function handleSaveProfile() {
+    await saveProfile()
+    if (selectedTemplateId) await refreshProfiles(selectedTemplateId)
+  }
+
+  async function handleImportFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    e.target.value = ''
+    if (!file) return
+    try {
+      const imported = await importUserProfile(file)
+      loadProfile(imported)
+      setSelectedTemplateId(imported.hardwareTemplateId)
+      setImportError(null)
+    } catch (err) {
+      setImportError(err instanceof ImportValidationError ? err.message : 'Import failed.')
+    }
+  }
+
+  if (templates.length === 0) {
+    return (
+      <div className="mx-auto max-w-md py-16 text-center text-sm text-slate-400">
+        No hardware templates yet. Switch to Template Creator mode to build one first.
+      </div>
+    )
+  }
+
+  return (
+    <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_320px]">
+      <div className="flex min-w-0 flex-col gap-4">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <Field label="Hardware template">
+            <select
+              className="input"
+              value={selectedTemplateId}
+              onChange={(e) => {
+                setSelectedTemplateId(e.target.value)
+                setSelectedControlId(null)
+                clearProfile()
+              }}
+            >
+              <option value="">Select a template…</option>
+              {templates.map((t) => (
+                <option key={t.id} value={t.id}>
+                  {t.meta.manufacturer ? `${t.meta.manufacturer} ` : ''}
+                  {t.meta.model}
+                </option>
+              ))}
+            </select>
+          </Field>
+
+          <Field label="Profile">
+            <select
+              className="input"
+              value={profile?.id ?? ''}
+              disabled={!selectedTemplateId}
+              onChange={(e) => {
+                const found = templateProfiles.find((p) => p.id === e.target.value)
+                if (found) loadProfile(found)
+              }}
+            >
+              <option value="">Select a profile…</option>
+              {templateProfiles.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name}
+                  {p.game ? ` — ${p.game}` : ''}
+                </option>
+              ))}
+            </select>
+          </Field>
+        </div>
+
+        {selectedTemplateId && !profile && (
+          <NewProfileForm
+            onCreate={(params) => startNewProfile({ hardwareTemplateId: selectedTemplateId, ...params })}
+          />
+        )}
+
+        {template && profile && (
+          <>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+              <input
+                className="input"
+                placeholder="Profile name"
+                value={profile.name}
+                onChange={(e) => updateMeta({ name: e.target.value })}
+              />
+              <input
+                className="input"
+                placeholder="Game"
+                value={profile.game ?? ''}
+                onChange={(e) => updateMeta({ game: e.target.value })}
+              />
+              <input
+                className="input"
+                placeholder="Vehicle"
+                value={profile.vehicle ?? ''}
+                onChange={(e) => updateMeta({ vehicle: e.target.value })}
+              />
+            </div>
+
+            <div className="overflow-hidden rounded-lg border border-slate-700 bg-slate-900">
+              <HardwareCanvas
+                imageUrl={template.imageUrl}
+                imageWidth={template.imageWidth}
+                imageHeight={template.imageHeight}
+                controls={template.controls}
+                selectedControlId={selectedControlId}
+                editable={false}
+                onSelectControl={setSelectedControlId}
+                isControlDimmed={(c) => !profile.bindings.some((b) => b.controlId === c.id)}
+              />
+            </div>
+
+            <div className="flex flex-wrap items-center gap-3">
+              <button
+                type="button"
+                onClick={handleSaveProfile}
+                className="rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-500"
+              >
+                Save profile
+              </button>
+              <button
+                type="button"
+                onClick={() => exportUserProfile(profile)}
+                className="rounded-md border border-slate-600 px-4 py-2 text-sm text-slate-200 hover:border-slate-400"
+              >
+                Export JSON
+              </button>
+              <button
+                type="button"
+                onClick={() => importInputRef.current?.click()}
+                className="rounded-md border border-slate-600 px-4 py-2 text-sm text-slate-200 hover:border-slate-400"
+              >
+                Import JSON
+              </button>
+              <span className="text-xs text-slate-500">
+                {profile.bindings.length} / {template.controls.length} bound
+              </span>
+            </div>
+          </>
+        )}
+        <input ref={importInputRef} type="file" accept="application/json" className="hidden" onChange={handleImportFile} />
+        {importError && <p className="text-sm text-red-400">{importError}</p>}
+      </div>
+
+      <aside className="rounded-lg border border-slate-700 bg-slate-900 p-4">
+        <h3 className="mb-3 text-sm font-semibold text-slate-200">Binding</h3>
+        {profile ? (
+          <BindingPanel
+            control={selectedControl}
+            binding={selectedBinding}
+            onSave={setBinding}
+            onClear={removeBinding}
+          />
+        ) : (
+          <p className="text-sm text-slate-400">Select or create a profile to assign bindings.</p>
+        )}
+      </aside>
+    </div>
+  )
+}
+
+function NewProfileForm({
+  onCreate,
+}: {
+  onCreate: (params: { name: string; game?: string; vehicle?: string; track?: string }) => void
+}) {
+  const [name, setName] = useState('')
+  return (
+    <div className="flex flex-wrap items-end gap-3 rounded-lg border border-slate-700 bg-slate-900 p-4">
+      <Field label="New profile name">
+        <input className="input" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. iRacing Ferrari 296 GT3" />
+      </Field>
+      <button
+        type="button"
+        disabled={!name.trim()}
+        onClick={() => onCreate({ name: name.trim() })}
+        className="rounded-md bg-cyan-600 px-4 py-2 text-sm font-medium text-white hover:bg-cyan-500 disabled:cursor-not-allowed disabled:opacity-40"
+      >
+        Create profile
+      </button>
+    </div>
+  )
+}
