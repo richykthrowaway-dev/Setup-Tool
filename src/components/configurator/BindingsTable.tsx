@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { CONTROL_TYPE_LABELS, type ControlObject, type UserProfile } from '../../types/models'
+import { useUiPreferencesStore, type LabelDisplayMode } from '../../store/uiPreferencesStore'
 import {
   buildBindingRows,
   filterBindingRows,
@@ -47,6 +48,22 @@ export function BindingsTable({
   // still needs attention, so that should be visible without extra clicks.
   const [sortKey, setSortKey] = useState<BindingSortKey>('unbound')
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc')
+
+  const labelDisplayMode = useUiPreferencesStore((s) => s.labelDisplayMode)
+  const setLabelDisplayMode = useUiPreferencesStore((s) => s.setLabelDisplayMode)
+
+  const displayModeOrder: LabelDisplayMode[] = ['names', 'numbers', 'functions']
+  const displayModeLabels: Record<LabelDisplayMode, string> = {
+    names: 'Names',
+    numbers: 'Numbers',
+    functions: 'Functions',
+  }
+
+  function cycleLabelDisplayMode() {
+    const currentIndex = displayModeOrder.indexOf(labelDisplayMode)
+    const nextIndex = (currentIndex + 1) % displayModeOrder.length
+    setLabelDisplayMode(displayModeOrder[nextIndex])
+  }
 
   const allRows = useMemo(() => buildBindingRows(controls, profile.bindings), [controls, profile.bindings])
   const unboundWithSuggestionCount = useMemo(
@@ -118,6 +135,15 @@ export function BindingsTable({
           onChange={(e) => setSearch(e.target.value)}
         />
 
+        <button
+          type="button"
+          onClick={cycleLabelDisplayMode}
+          className="rounded-md border border-slate-600 px-3 py-1.5 text-sm text-slate-200 hover:border-slate-400"
+          title="Cycle through: Control names, Button numbers, Assigned functions"
+        >
+          Labels: {displayModeLabels[labelDisplayMode]}
+        </button>
+
         {unboundWithSuggestionCount > 0 && (
           <button
             type="button"
@@ -170,7 +196,11 @@ export function BindingsTable({
                 >
                   <td className="truncate px-3 py-2 align-top">
                     <div className="truncate font-medium text-slate-100" title={control.label}>
-                      {control.label}
+                      {labelDisplayMode === 'names'
+                        ? control.label
+                        : labelDisplayMode === 'numbers'
+                          ? (i + 1).toString()
+                          : binding?.assignedFunction || '—'}
                     </div>
                     <div className="text-xs text-slate-500">{CONTROL_TYPE_LABELS[control.type]}</div>
                     {!binding && (
