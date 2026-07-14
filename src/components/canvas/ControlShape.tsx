@@ -173,6 +173,41 @@ export function ControlShape({
             verticalAlign="middle"
           />
         )}
+        {isBound && assignedFunction && (
+          <Group x={0} y={circleRadius + 6 + 9} opacity={isHoveredOrSelected ? 1 : 0.9}>
+            {(() => {
+              const fnChipWidth = Math.min(estimateChipWidth(assignedFunction, 10), 120)
+              return (
+                <>
+                  <Rect
+                    x={-fnChipWidth / 2}
+                    y={-9}
+                    width={fnChipWidth}
+                    height={18}
+                    cornerRadius={9}
+                    fill="rgba(15, 23, 42, 0.9)"
+                    stroke="rgba(255, 255, 255, 0.15)"
+                    strokeWidth={1}
+                  />
+                  <Text
+                    text={assignedFunction}
+                    fontSize={10}
+                    fontStyle="600"
+                    fill="#f8fafc"
+                    x={-fnChipWidth / 2}
+                    y={-9}
+                    width={fnChipWidth}
+                    height={18}
+                    align="center"
+                    verticalAlign="middle"
+                    ellipsis
+                    wrap="none"
+                  />
+                </>
+              )
+            })()}
+          </Group>
+        )}
       </Group>
     )
   }
