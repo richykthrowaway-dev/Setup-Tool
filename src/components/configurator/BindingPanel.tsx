@@ -7,9 +7,10 @@ interface BindingPanelProps {
   binding: Binding | undefined
   onSave: (params: { controlId: string; assignedFunction: string; notes?: string; category?: string }) => void
   onClear: (controlId: string) => void
+  functionSuggestionsListId?: string
 }
 
-export function BindingPanel({ control, binding, onSave, onClear }: BindingPanelProps) {
+export function BindingPanel({ control, binding, onSave, onClear, functionSuggestionsListId }: BindingPanelProps) {
   const [assignedFunction, setAssignedFunction] = useState('')
   const [notes, setNotes] = useState('')
   const [category, setCategory] = useState('')
@@ -42,6 +43,7 @@ export function BindingPanel({ control, binding, onSave, onClear }: BindingPanel
           value={assignedFunction}
           onChange={(e) => setAssignedFunction(e.target.value)}
           placeholder={control.defaultBinding || 'e.g. Brake Bias Adjustment'}
+          list={functionSuggestionsListId}
         />
       </Field>
 

@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useLibraryStore } from '../../store/libraryStore'
 import { useProfileStore } from '../../store/profileStore'
 import { useUiPreferencesStore } from '../../store/uiPreferencesStore'
+import { GAME_FUNCTION_DATALIST_ID, getGameFunctionSuggestions } from '../../data/gameFunctions'
 import { HardwareCanvas } from '../canvas/HardwareCanvas'
 import { BindingPanel } from './BindingPanel'
 import { BindingsTable } from './BindingsTable'
@@ -66,6 +67,7 @@ export function ConfiguratorView({ initialTemplateId, initialProfileId }: Config
   }, [initialProfileId, templateProfiles, profile, loadProfile])
   const selectedControl = template?.controls.find((c) => c.id === selectedControlId) ?? null
   const selectedBinding = profile?.bindings.find((b) => b.controlId === selectedControlId)
+  const gameFunctionSuggestions = useMemo(() => getGameFunctionSuggestions(profile?.game), [profile?.game])
 
   async function handleSaveProfile() {
     await saveProfile()
@@ -99,6 +101,13 @@ export function ConfiguratorView({ initialTemplateId, initialProfileId }: Config
 
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_320px]">
+      {gameFunctionSuggestions.length > 0 && (
+        <datalist id={GAME_FUNCTION_DATALIST_ID}>
+          {gameFunctionSuggestions.map((fn, i) => (
+            <option key={`${fn}-${i}`} value={fn} />
+          ))}
+        </datalist>
+      )}
       <div className="flex min-w-0 flex-col gap-4">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <Field label="Hardware template">
@@ -213,6 +222,7 @@ export function ConfiguratorView({ initialTemplateId, initialProfileId }: Config
                 onSelectControl={setSelectedControlId}
                 onSaveBinding={setBinding}
                 onClearBinding={removeBinding}
+                functionSuggestionsListId={GAME_FUNCTION_DATALIST_ID}
               />
             )}
 
@@ -265,6 +275,7 @@ export function ConfiguratorView({ initialTemplateId, initialProfileId }: Config
             binding={selectedBinding}
             onSave={setBinding}
             onClear={removeBinding}
+            functionSuggestionsListId={GAME_FUNCTION_DATALIST_ID}
           />
         ) : (
           <p className="text-sm text-slate-400">Select or create a profile to assign bindings.</p>

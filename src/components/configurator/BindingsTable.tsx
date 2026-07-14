@@ -17,6 +17,7 @@ interface BindingsTableProps {
   onSelectControl: (id: string) => void
   onSaveBinding: (params: { controlId: string; assignedFunction: string; notes?: string; category?: string }) => void
   onClearBinding: (controlId: string) => void
+  functionSuggestionsListId?: string
 }
 
 const SORTABLE_COLUMNS: { key: BindingSortKey; label: string; width: string }[] = [
@@ -38,6 +39,7 @@ export function BindingsTable({
   onSelectControl,
   onSaveBinding,
   onClearBinding,
+  functionSuggestionsListId,
 }: BindingsTableProps) {
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<BindingStatusFilter>('all')
@@ -184,6 +186,7 @@ export function BindingsTable({
                       defaultValue={binding?.assignedFunction ?? ''}
                       placeholder={control.defaultBinding || '—'}
                       onBlur={(e) => commitField(control.id, 'assignedFunction', e.target.value)}
+                      list={functionSuggestionsListId}
                     />
                     {!binding && control.defaultBinding && (
                       <button
