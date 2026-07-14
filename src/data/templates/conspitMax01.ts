@@ -7,6 +7,13 @@ import type { HardwareTemplate } from '../../types/models'
 // The control layout and image below come from an actual Conspit MAX 01
 // product photo, uploaded through the app's "Upload your MAX 01 photo"
 // flow (Template Creator empty state) and refined from there.
+//
+// Labels are deliberately neutral (position/type only, e.g. "Rotary 3
+// (lower left)") rather than named after whatever function label sticker
+// happened to be on the photographed unit — those stickers were applied
+// by a previous owner, not the manufacturer, and don't reflect a verified
+// control layout. defaultBinding is left blank for the same reason: we
+// don't want to suggest a specific software function we can't vouch for.
 
 export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
   id: 'example-conspit-max-01',
@@ -26,7 +33,7 @@ export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
     {
       id: '775e818d-a3a3-40aa-b418-7c4975422d92',
       type: 'rotary-encoder',
-      label: 'DRS',
+      label: 'Rotary 1 (top left)',
       position: {
         x: 17.29,
         y: 17.2
@@ -44,12 +51,12 @@ export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
         opacity: 0.22
       },
       notes: 'Push-click rotary.',
-      defaultBinding: 'DRS Activation'
+      defaultBinding: ''
     },
     {
       id: '657ea92c-ea0c-4a0d-a541-f73ee4f3c995',
       type: 'rotary-encoder',
-      label: 'P',
+      label: 'Rotary 2 (top right)',
       position: {
         x: 79.42,
         y: 17.77
@@ -67,12 +74,12 @@ export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
         opacity: 0.22
       },
       notes: 'Push-click rotary.',
-      defaultBinding: 'Pit Limiter'
+      defaultBinding: ''
     },
     {
       id: '6620bcd1-d080-4cce-a6ad-5655f710c7c6',
       type: 'button',
-      label: 'N',
+      label: 'Button 1 (upper left)',
       position: {
         x: 24.78,
         y: 21.03
@@ -89,12 +96,12 @@ export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
         stroke: '#15803d',
         opacity: 0.22
       },
-      defaultBinding: 'Neutral'
+      defaultBinding: ''
     },
     {
       id: '6a71a61c-2fde-4201-85be-a9cbc20b94d0',
       type: 'button',
-      label: 'FCY',
+      label: 'Button 2 (upper right)',
       position: {
         x: 72.2,
         y: 21.61
@@ -111,12 +118,12 @@ export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
         stroke: '#a16207',
         opacity: 0.22
       },
-      defaultBinding: 'Full Course Yellow Flag'
+      defaultBinding: ''
     },
     {
       id: '1ddce6b8-4702-4cb0-9a54-a388faee8078',
       type: 'paddle',
-      label: 'Left Rotary Paddle',
+      label: 'Rotary Paddle (left)',
       position: {
         x: 9.23,
         y: 21.13
@@ -139,7 +146,7 @@ export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
     {
       id: 'bef8657d-a2a7-4cb2-9147-24f36283d34a',
       type: 'rotary-encoder',
-      label: 'Right Rotary Paddle',
+      label: 'Rotary Paddle (right)',
       position: {
         x: 87.8,
         y: 22.29
@@ -162,7 +169,7 @@ export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
     {
       id: '5530dcd8-6095-4168-bb1f-974e63876ef0',
       type: 'button',
-      label: 'Radio / PTT',
+      label: 'Button 3 (left grip)',
       position: {
         x: 28.16,
         y: 37.16
@@ -179,12 +186,12 @@ export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
         stroke: '#9d174d',
         opacity: 0.22
       },
-      defaultBinding: 'Push-to-Talk'
+      defaultBinding: ''
     },
     {
       id: 'bd0f46c6-db6a-475b-9e09-bfc37facd749',
       type: 'button',
-      label: 'Wiper',
+      label: 'Button 4 (right grip)',
       position: {
         x: 68.81,
         y: 38.13
@@ -201,12 +208,12 @@ export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
         stroke: '#9d174d',
         opacity: 0.22
       },
-      defaultBinding: 'Wiper Toggle'
+      defaultBinding: ''
     },
     {
       id: 'e5ae5e13-5e91-4b15-8a4a-52c3610c0d05',
       type: 'funky-switch',
-      label: 'MULTI',
+      label: 'Funky Switch (left)',
       position: {
         x: 25.78,
         y: 47.55
@@ -223,13 +230,13 @@ export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
         stroke: '#92400e',
         opacity: 0.22
       },
-      notes: '7-way directional switch (N/NE/E/SE/S/SW/W + center push) for quick multi-function access.',
-      defaultBinding: 'Multi-function Adjustment'
+      notes: '7-way directional switch (N/NE/E/SE/S/SW/W + center push).',
+      defaultBinding: ''
     },
     {
       id: '59ef72c2-418b-463d-bba6-2a1611f9d912',
       type: 'funky-switch',
-      label: 'MENU',
+      label: 'Funky Switch (right)',
       position: {
         x: 71.54,
         y: 47.36
@@ -246,13 +253,13 @@ export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
         stroke: '#92400e',
         opacity: 0.22
       },
-      notes: '7-way directional switch (N/NE/E/SE/S/SW/W + center push) for dash menu navigation.',
-      defaultBinding: 'Menu Navigation'
+      notes: '7-way directional switch (N/NE/E/SE/S/SW/W + center push).',
+      defaultBinding: ''
     },
     {
       id: '1b3c86a3-b9c7-45cd-b3a1-7af9bb51a116',
       type: 'button',
-      label: 'OK',
+      label: 'Button 5 (large, left)',
       position: {
         x: 27.16,
         y: 55.81
@@ -269,12 +276,12 @@ export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
         stroke: '#991b1b',
         opacity: 0.22
       },
-      defaultBinding: 'Confirm'
+      defaultBinding: ''
     },
     {
       id: '2a83be73-df63-4b58-91d0-1e3e47a8f5cb',
       type: 'button',
-      label: 'Right Button',
+      label: 'Button 6 (right)',
       position: {
         x: 69.42,
         y: 56.39
@@ -296,7 +303,7 @@ export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
     {
       id: '52356cf8-3288-4278-b809-86125032abd0',
       type: 'joystick',
-      label: 'Left Thumbstick',
+      label: 'Thumbstick (left)',
       position: {
         x: 27.74,
         y: 71
@@ -318,7 +325,7 @@ export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
     {
       id: 'd6da7377-926f-4bad-a041-b9baaf84aae7',
       type: 'joystick',
-      label: 'Right Thumbstick',
+      label: 'Thumbstick (right)',
       position: {
         x: 67.68,
         y: 71
@@ -340,7 +347,7 @@ export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
     {
       id: '58b3af1c-910d-4477-a0a0-8b4f0452105f',
       type: 'rotary-encoder',
-      label: 'MAP',
+      label: 'Rotary 3 (lower left)',
       position: {
         x: 34.62,
         y: 62.32
@@ -357,12 +364,12 @@ export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
         stroke: '#6b21a8',
         opacity: 0.22
       },
-      defaultBinding: 'Engine Map Select'
+      defaultBinding: ''
     },
     {
       id: '4793409a-9250-4674-b687-efa7917564a7',
       type: 'rotary-encoder',
-      label: 'DELTA (left)',
+      label: 'Rotary 4 (bottom left)',
       position: {
         x: 41.74,
         y: 71.09
@@ -384,7 +391,7 @@ export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
     {
       id: 'e552d635-31d1-4c42-a395-528b917502d3',
       type: 'rotary-encoder',
-      label: 'DELTA (right)',
+      label: 'Rotary 5 (bottom right)',
       position: {
         x: 53.39,
         y: 70.7
@@ -406,7 +413,7 @@ export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
     {
       id: 'a9acd265-50f1-4b20-965d-f6d13174357e',
       type: 'rotary-encoder',
-      label: 'MODE',
+      label: 'Rotary 6 (lower right)',
       position: {
         x: 61.68,
         y: 62.51
@@ -423,7 +430,7 @@ export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
         stroke: '#6b21a8',
         opacity: 0.22
       },
-      defaultBinding: 'Dash Mode'
+      defaultBinding: ''
     }
   ],
 }
