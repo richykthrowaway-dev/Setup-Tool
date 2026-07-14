@@ -221,15 +221,30 @@ export function ConfiguratorView({ initialTemplateId, initialProfileId, initialV
                 />
               </div>
             ) : (
-              <BindingsTable
-                controls={template.controls}
-                profile={profile}
-                selectedControlId={selectedControlId}
-                onSelectControl={setSelectedControlId}
-                onSaveBinding={setBinding}
-                onClearBinding={removeBinding}
-                functionSuggestionsListId={GAME_FUNCTION_DATALIST_ID}
-              />
+              <div className="grid grid-cols-1 gap-4 lg:grid-cols-[340px_1fr]">
+                <div className="overflow-hidden rounded-lg border border-slate-700 bg-slate-900">
+                  <HardwareCanvas
+                    imageUrl={template.imageUrl}
+                    imageWidth={template.imageWidth}
+                    imageHeight={template.imageHeight}
+                    controls={template.controls}
+                    selectedControlId={selectedControlId}
+                    editable={false}
+                    onSelectControl={setSelectedControlId}
+                    isControlDimmed={(c) => !profile.bindings.some((b) => b.controlId === c.id)}
+                    showNumbersOnly={true}
+                  />
+                </div>
+                <BindingsTable
+                  controls={template.controls}
+                  profile={profile}
+                  selectedControlId={selectedControlId}
+                  onSelectControl={setSelectedControlId}
+                  onSaveBinding={setBinding}
+                  onClearBinding={removeBinding}
+                  functionSuggestionsListId={GAME_FUNCTION_DATALIST_ID}
+                />
+              </div>
             )}
 
             <div className="flex flex-wrap items-center gap-3">

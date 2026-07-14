@@ -19,6 +19,8 @@ interface HardwareCanvasProps {
   /** Fired with normalized image coordinates when the empty canvas is clicked. */
   onCanvasClick?: (position: { x: number; y: number }) => void
   isControlDimmed?: (control: ControlObject) => boolean
+  /** If true, show only numbers on controls instead of shape overlays. Used in table view. */
+  showNumbersOnly?: boolean
 }
 
 export function HardwareCanvas({
@@ -32,6 +34,7 @@ export function HardwareCanvas({
   onChangeControl,
   onCanvasClick,
   isControlDimmed,
+  showNumbersOnly,
 }: HardwareCanvasProps) {
   const { ref, width } = useContainerWidth<HTMLDivElement>()
   const [image] = useImage(imageUrl)
@@ -74,7 +77,7 @@ export function HardwareCanvas({
             {image && (
               <KonvaImage name="canvas-background" image={image} width={stageWidth} height={stageHeight} />
             )}
-            {controls.map((control) => (
+            {controls.map((control, index) => (
               <ControlShape
                 key={control.id}
                 control={control}
@@ -85,6 +88,8 @@ export function HardwareCanvas({
                 dimmed={isControlDimmed?.(control)}
                 onSelect={onSelectControl}
                 onChange={onChangeControl}
+                showNumbersOnly={showNumbersOnly}
+                controlNumber={index + 1}
               />
             ))}
           </Layer>
