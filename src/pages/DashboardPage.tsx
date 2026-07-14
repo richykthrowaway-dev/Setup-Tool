@@ -190,12 +190,20 @@ function ProfileList({
             </div>
             <div className="flex items-center gap-2 text-sm">
               {template && (
-                <Link
-                  to={`/configure/${template.id}?profile=${profile.id}`}
-                  className="rounded-md border border-slate-600 px-3 py-1.5 text-slate-200 hover:border-slate-400"
-                >
-                  Open
-                </Link>
+                <>
+                  <Link
+                    to={`/configure/${template.id}?profile=${profile.id}&view=table`}
+                    className="rounded-md bg-cyan-600 px-3 py-1.5 font-medium text-white hover:bg-cyan-500"
+                  >
+                    View table
+                  </Link>
+                  <Link
+                    to={`/configure/${template.id}?profile=${profile.id}`}
+                    className="rounded-md border border-slate-600 px-3 py-1.5 text-slate-200 hover:border-slate-400"
+                  >
+                    Open
+                  </Link>
+                </>
               )}
               <button
                 type="button"

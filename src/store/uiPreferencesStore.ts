@@ -16,7 +16,7 @@ interface UiPreferencesState {
 export const useUiPreferencesStore = create<UiPreferencesState>()(
   persist(
     (set) => ({
-      configuratorViewMode: 'canvas',
+      configuratorViewMode: 'table',
       setConfiguratorViewMode: (mode) => set({ configuratorViewMode: mode }),
     }),
     { name: 'supermapper:ui-preferences' },

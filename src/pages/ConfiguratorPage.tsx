@@ -10,7 +10,11 @@ export function ConfiguratorPage() {
       <Link to="/dashboard" className="w-fit text-sm text-slate-400 hover:text-slate-200">
         ← Dashboard
       </Link>
-      <ConfiguratorView initialTemplateId={templateId} initialProfileId={searchParams.get('profile') ?? undefined} />
+      <ConfiguratorView
+        initialTemplateId={templateId}
+        initialProfileId={searchParams.get('profile') ?? undefined}
+        initialViewMode={searchParams.get('view') === 'table' ? 'table' : undefined}
+      />
     </div>
   )
 }

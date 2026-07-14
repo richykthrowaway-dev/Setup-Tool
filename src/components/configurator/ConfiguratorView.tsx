@@ -19,9 +19,11 @@ interface ConfiguratorViewProps {
   initialTemplateId?: string
   /** Preselects a specific profile once it's loaded, e.g. from a "Your profiles" deep link. */
   initialProfileId?: string
+  /** Forces the view mode on arrival, e.g. from a "View table" deep link. Overrides the persisted preference. */
+  initialViewMode?: 'canvas' | 'table'
 }
 
-export function ConfiguratorView({ initialTemplateId, initialProfileId }: ConfiguratorViewProps) {
+export function ConfiguratorView({ initialTemplateId, initialProfileId, initialViewMode }: ConfiguratorViewProps) {
   const templates = useLibraryStore((s) => s.templates)
   const refreshTemplates = useLibraryStore((s) => s.refreshTemplates)
   const profiles = useLibraryStore((s) => s.profiles)
@@ -52,6 +54,10 @@ export function ConfiguratorView({ initialTemplateId, initialProfileId }: Config
   useEffect(() => {
     if (initialTemplateId) setSelectedTemplateId(initialTemplateId)
   }, [initialTemplateId])
+
+  useEffect(() => {
+    if (initialViewMode) setViewMode(initialViewMode)
+  }, [initialViewMode, setViewMode])
 
   useEffect(() => {
     if (selectedTemplateId) refreshProfiles(selectedTemplateId)
