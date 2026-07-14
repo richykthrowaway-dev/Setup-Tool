@@ -102,9 +102,6 @@ export function ControlShape({
 
   const chipWidth = estimateChipWidth(control.label, LABEL_FONT_SIZE)
   const chipCenterY = pxHeight / 2 + 6 + LABEL_CHIP_HEIGHT / 2
-  // Counter-rotate the label by the marker's own rotation so it stays
-  // upright by default; labelRotation lets it be tilted further on purpose.
-  const labelRotation = -control.rotation + (control.labelRotation ?? 0)
 
   return (
     <>
@@ -155,33 +152,42 @@ export function ControlShape({
           />
         )}
 
-        <Group x={0} y={chipCenterY} rotation={labelRotation} opacity={nodeOpacity}>
-          <Rect
-            x={-chipWidth / 2}
-            y={-LABEL_CHIP_HEIGHT / 2}
-            width={chipWidth}
-            height={LABEL_CHIP_HEIGHT}
-            cornerRadius={LABEL_CHIP_HEIGHT / 2}
-            fill="rgba(15, 23, 42, 0.85)"
-            stroke="rgba(255, 255, 255, 0.12)"
-            strokeWidth={1}
-            shadowColor="black"
-            shadowBlur={6}
-            shadowOpacity={0.35}
-            shadowOffsetY={1}
-          />
-          <Text
-            text={control.label}
-            fontSize={LABEL_FONT_SIZE}
-            fontStyle="600"
-            fill="#f8fafc"
-            x={-chipWidth / 2}
-            y={-LABEL_CHIP_HEIGHT / 2}
-            width={chipWidth}
-            height={LABEL_CHIP_HEIGHT}
-            align="center"
-            verticalAlign="middle"
-          />
+        {/*
+          Counter-rotate the marker's own rotation first so this subtree is
+          back to a "screen-upright" frame — otherwise the label's position
+          offset below would still swing around the marker as it rotates,
+          even though the earlier fix kept the text itself upright.
+          labelRotation is then applied on top, independent of the marker.
+        */}
+        <Group rotation={-control.rotation}>
+          <Group x={0} y={chipCenterY} rotation={control.labelRotation ?? 0} opacity={nodeOpacity}>
+            <Rect
+              x={-chipWidth / 2}
+              y={-LABEL_CHIP_HEIGHT / 2}
+              width={chipWidth}
+              height={LABEL_CHIP_HEIGHT}
+              cornerRadius={LABEL_CHIP_HEIGHT / 2}
+              fill="rgba(15, 23, 42, 0.85)"
+              stroke="rgba(255, 255, 255, 0.12)"
+              strokeWidth={1}
+              shadowColor="black"
+              shadowBlur={6}
+              shadowOpacity={0.35}
+              shadowOffsetY={1}
+            />
+            <Text
+              text={control.label}
+              fontSize={LABEL_FONT_SIZE}
+              fontStyle="600"
+              fill="#f8fafc"
+              x={-chipWidth / 2}
+              y={-LABEL_CHIP_HEIGHT / 2}
+              width={chipWidth}
+              height={LABEL_CHIP_HEIGHT}
+              align="center"
+              verticalAlign="middle"
+            />
+          </Group>
         </Group>
       </Group>
       {isSelected && editable && (
