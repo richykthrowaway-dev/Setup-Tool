@@ -28,6 +28,7 @@ export const controlObjectSchema = z.object({
   position: normalizedPositionSchema,
   size: normalizedSizeSchema,
   rotation: z.number(),
+  labelRotation: z.number().optional(),
   style: controlStyleSchema,
   notes: z.string().optional(),
   defaultBinding: z.string().optional(),

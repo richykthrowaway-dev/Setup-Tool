@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { Circle, Ellipse, Group, Rect, Text, Transformer } from 'react-konva'
+import { Circle, Ellipse, Group, RegularPolygon, Rect, Star, Text, Transformer } from 'react-konva'
 import type Konva from 'konva'
 import type { ControlObject } from '../../types/models'
 import { controlToPixelCenter, pixelCenterToNormalizedPosition, pixelSizeToNormalizedSize } from '../../lib/coordinates'
@@ -101,7 +101,10 @@ export function ControlShape({
   }
 
   const chipWidth = estimateChipWidth(control.label, LABEL_FONT_SIZE)
-  const chipY = pxHeight / 2 + 6
+  const chipCenterY = pxHeight / 2 + 6 + LABEL_CHIP_HEIGHT / 2
+  // Counter-rotate the label by the marker's own rotation so it stays
+  // upright by default; labelRotation lets it be tilted further on purpose.
+  const labelRotation = -control.rotation + (control.labelRotation ?? 0)
 
   return (
     <>
@@ -133,9 +136,29 @@ export function ControlShape({
         {control.style.shape === 'ellipse' && (
           <Ellipse radiusX={pxWidth / 2} radiusY={pxHeight / 2} fillOpacity={fillOpacity} {...markerProps} />
         )}
+        {control.style.shape === 'triangle' && (
+          <RegularPolygon sides={3} radius={(pxWidth + pxHeight) / 4} fillOpacity={fillOpacity} {...markerProps} />
+        )}
+        {control.style.shape === 'diamond' && (
+          <RegularPolygon sides={4} radius={(pxWidth + pxHeight) / 4} fillOpacity={fillOpacity} {...markerProps} />
+        )}
+        {control.style.shape === 'hexagon' && (
+          <RegularPolygon sides={6} radius={(pxWidth + pxHeight) / 4} fillOpacity={fillOpacity} {...markerProps} />
+        )}
+        {control.style.shape === 'star' && (
+          <Star
+            numPoints={5}
+            innerRadius={(pxWidth + pxHeight) / 8}
+            outerRadius={(pxWidth + pxHeight) / 4}
+            fillOpacity={fillOpacity}
+            {...markerProps}
+          />
+        )}
 
-        <Group x={-chipWidth / 2} y={chipY} opacity={nodeOpacity}>
+        <Group x={0} y={chipCenterY} rotation={labelRotation} opacity={nodeOpacity}>
           <Rect
+            x={-chipWidth / 2}
+            y={-LABEL_CHIP_HEIGHT / 2}
             width={chipWidth}
             height={LABEL_CHIP_HEIGHT}
             cornerRadius={LABEL_CHIP_HEIGHT / 2}
@@ -152,6 +175,8 @@ export function ControlShape({
             fontSize={LABEL_FONT_SIZE}
             fontStyle="600"
             fill="#f8fafc"
+            x={-chipWidth / 2}
+            y={-LABEL_CHIP_HEIGHT / 2}
             width={chipWidth}
             height={LABEL_CHIP_HEIGHT}
             align="center"

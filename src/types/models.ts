@@ -19,7 +19,7 @@ export const CONTROL_TYPES = [
 
 export type ControlType = (typeof CONTROL_TYPES)[number]
 
-export const CONTROL_SHAPES = ['rect', 'circle', 'ellipse'] as const
+export const CONTROL_SHAPES = ['rect', 'circle', 'ellipse', 'triangle', 'diamond', 'hexagon', 'star'] as const
 export type ControlShape = (typeof CONTROL_SHAPES)[number]
 
 /** Percentage-based position, relative to the source image (0-100). */
@@ -48,7 +48,14 @@ export interface ControlObject {
   label: string
   position: NormalizedPosition
   size: NormalizedSize
+  /** Rotation of the marker shape, in degrees. */
   rotation: number
+  /**
+   * Extra rotation applied to the label only, on top of automatically
+   * counter-rotating the marker's own rotation — so by default (0) the
+   * label stays upright even when the marker itself is tilted.
+   */
+  labelRotation?: number
   style: ControlStyle
   notes?: string
   /** Optional suggested binding shown until the user assigns their own. */

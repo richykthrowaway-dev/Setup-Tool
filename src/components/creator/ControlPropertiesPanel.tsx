@@ -102,6 +102,18 @@ export function ControlPropertiesPanel({ control, onChange, onDelete }: ControlP
         </Field>
       </div>
 
+      <Field label={`Label rotation (${round(control.labelRotation ?? 0)}°)`}>
+        <input
+          type="range"
+          min={-180}
+          max={180}
+          step={1}
+          className="w-full accent-cyan-500"
+          value={control.labelRotation ?? 0}
+          onChange={(e) => onChange(control.id, { labelRotation: Number(e.target.value) })}
+        />
+      </Field>
+
       <div className="grid grid-cols-2 gap-3">
         <Field label="Fill color">
           <input

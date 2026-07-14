@@ -4,43 +4,9 @@ import type { HardwareTemplate } from '../../types/models'
 // hardcoded "MAX 01 mode". Any hardware image can produce an equivalent
 // HardwareTemplate through the Template Creator.
 //
-// The control layout below is mapped from an actual Conspit MAX 01 product
-// photo (all 20 physical controls, positioned/sized to match). The image
-// itself is still a placeholder pending the real photo file — swap
-// PLACEHOLDER_IMAGE_URL (and IMAGE_WIDTH/IMAGE_HEIGHT if the aspect ratio
-// differs) for a hosted URL of the real photo and the overlay will line up.
-
-const IMAGE_WIDTH = 1500
-const IMAGE_HEIGHT = 1000
-
-const PLACEHOLDER_IMAGE_SVG = `
-<svg xmlns="http://www.w3.org/2000/svg" width="${IMAGE_WIDTH}" height="${IMAGE_HEIGHT}">
-  <rect width="100%" height="100%" fill="#f8fafc" />
-  <rect x="20" y="20" width="${IMAGE_WIDTH - 40}" height="${IMAGE_HEIGHT - 40}" rx="24" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="3" />
-  <text x="50%" y="46%" text-anchor="middle" fill="#64748b" font-family="system-ui, sans-serif" font-size="40" font-weight="600">
-    Conspit MAX 01
-  </text>
-  <text x="50%" y="54%" text-anchor="middle" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="18">
-    Placeholder — swap in the real product photo, layout is already mapped
-  </text>
-</svg>`.trim()
-
-const PLACEHOLDER_IMAGE_URL = `data:image/svg+xml;utf8,${encodeURIComponent(PLACEHOLDER_IMAGE_SVG)}`
-
-// Fill opacity kept low and uniform across the palette — the stroke ring
-// (full strength) carries the color identity, the fill is just a faint tint.
-// Hues loosely echo the real button colors on the physical device.
-const CHIP_OPACITY = 0.22
-const WHITE = { shape: 'rect', fill: '#f8fafc', stroke: '#94a3b8', opacity: 0.35 } as const
-const TEAL = { shape: 'circle', fill: '#22d3ee', stroke: '#0e7490', opacity: CHIP_OPACITY } as const
-const ORANGE = { shape: 'circle', fill: '#fb923c', stroke: '#9a3412', opacity: CHIP_OPACITY } as const
-const GREEN = { shape: 'circle', fill: '#4ade80', stroke: '#15803d', opacity: CHIP_OPACITY } as const
-const GOLD = { shape: 'circle', fill: '#facc15', stroke: '#a16207', opacity: CHIP_OPACITY } as const
-const FUNKY = { shape: 'rect', fill: '#fbbf24', stroke: '#92400e', opacity: CHIP_OPACITY } as const
-const PURPLE_ROTARY = { shape: 'rect', fill: '#a78bfa', stroke: '#5b21b6', opacity: CHIP_OPACITY } as const
-const PINK = { shape: 'circle', fill: '#f472b6', stroke: '#9d174d', opacity: CHIP_OPACITY } as const
-const RED = { shape: 'circle', fill: '#f87171', stroke: '#991b1b', opacity: CHIP_OPACITY } as const
-const PURPLE_KNOB = { shape: 'circle', fill: '#c084fc', stroke: '#6b21a8', opacity: CHIP_OPACITY } as const
+// The control layout and image below come from an actual Conspit MAX 01
+// product photo, uploaded through the app's "Upload your MAX 01 photo"
+// flow (Template Creator empty state) and refined from there.
 
 export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
   id: 'example-conspit-max-01',
@@ -49,219 +15,415 @@ export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
     model: 'MAX 01',
     description: 'Example template shipped with SuperMapper — control layout mapped from a real product photo.',
   },
-  imageUrl: PLACEHOLDER_IMAGE_URL,
-  imageWidth: IMAGE_WIDTH,
-  imageHeight: IMAGE_HEIGHT,
+  imageUrl: '/examples/conspit-max-01.webp',
+  imageWidth: 1500,
+  imageHeight: 1000,
   version: 1,
   isPublic: false,
   createdAt: '2026-01-01T00:00:00.000Z',
   updatedAt: '2026-01-01T00:00:00.000Z',
   controls: [
     {
-      id: 'ctrl-set',
-      type: 'button',
-      label: 'SET',
-      position: { x: 8, y: 13 },
-      size: { width: 8, height: 5 },
-      rotation: -20,
-      style: WHITE,
-      defaultBinding: '',
-    },
-    {
-      id: 'ctrl-bias-flag',
-      type: 'button',
-      label: 'BIAS (flag)',
-      position: { x: 85, y: 13 },
-      size: { width: 8, height: 5 },
-      rotation: 20,
-      style: WHITE,
-      defaultBinding: '',
-    },
-    {
-      id: 'ctrl-drs',
+      id: 'fc2fbe88-f5ec-4380-9687-dba3d90ff875',
       type: 'rotary-encoder',
       label: 'DRS',
-      position: { x: 16, y: 17 },
-      size: { width: 6, height: 6 },
+      position: {
+        x: 16.26,
+        y: 16.23
+      },
+      size: {
+        width: 5,
+        height: 5
+      },
       rotation: 0,
-      style: TEAL,
+      labelRotation: 0,
+      style: {
+        shape: 'circle',
+        fill: '#22d3ee',
+        stroke: '#0e7490',
+        opacity: 0.22
+      },
       notes: 'Push-click rotary.',
-      defaultBinding: 'DRS Activation',
+      defaultBinding: 'DRS Activation'
     },
     {
-      id: 'ctrl-p-knob',
+      id: 'd0a0b266-c97d-4932-84d6-893775b5e5d9',
       type: 'rotary-encoder',
       label: 'P',
-      position: { x: 78, y: 17 },
-      size: { width: 6, height: 6 },
+      position: {
+        x: 78.9,
+        y: 17.19
+      },
+      size: {
+        width: 5,
+        height: 5
+      },
       rotation: 0,
-      style: ORANGE,
+      labelRotation: 0,
+      style: {
+        shape: 'circle',
+        fill: '#fb923c',
+        stroke: '#9a3412',
+        opacity: 0.22
+      },
       notes: 'Push-click rotary.',
-      defaultBinding: 'Pit Limiter',
+      defaultBinding: 'Pit Limiter'
     },
     {
-      id: 'ctrl-n',
+      id: '6822825b-afcd-489c-90b9-1302b8205248',
       type: 'button',
       label: 'N',
-      position: { x: 24, y: 22 },
-      size: { width: 5, height: 6 },
+      position: {
+        x: 24.13,
+        y: 20.26
+      },
+      size: {
+        width: 5,
+        height: 5
+      },
       rotation: 0,
-      style: GREEN,
-      defaultBinding: 'Neutral',
+      labelRotation: 0,
+      style: {
+        shape: 'circle',
+        fill: '#4ade80',
+        stroke: '#15803d',
+        opacity: 0.22
+      },
+      defaultBinding: 'Neutral'
     },
     {
-      id: 'ctrl-fcy',
+      id: 'ca773be7-8b07-4dda-9eab-41ce59d15648',
       type: 'button',
       label: 'FCY',
-      position: { x: 70, y: 22 },
-      size: { width: 5, height: 6 },
+      position: {
+        x: 71.55,
+        y: 20.84
+      },
+      size: {
+        width: 5,
+        height: 5
+      },
       rotation: 0,
-      style: GOLD,
-      defaultBinding: 'Full Course Yellow Flag',
+      labelRotation: 0,
+      style: {
+        shape: 'circle',
+        fill: '#facc15',
+        stroke: '#a16207',
+        opacity: 0.22
+      },
+      defaultBinding: 'Full Course Yellow Flag'
     },
     {
-      id: 'ctrl-left-rotary-paddle',
+      id: 'c60e54f8-896f-4737-a588-b90296ee0ef1',
       type: 'paddle',
       label: 'Left Rotary Paddle',
-      position: { x: 5, y: 25 },
-      size: { width: 5, height: 10 },
-      rotation: -15,
-      style: PURPLE_ROTARY,
+      position: {
+        x: 9.23,
+        y: 21.13
+      },
+      size: {
+        width: 3,
+        height: 10
+      },
+      rotation: 0,
+      labelRotation: 0,
+      style: {
+        shape: 'ellipse',
+        fill: '#a78bfa',
+        stroke: '#5b21b6',
+        opacity: 0.22
+      },
       notes: 'Knurled rotary paddle mounted on the grip.',
-      defaultBinding: '',
+      defaultBinding: ''
     },
     {
-      id: 'ctrl-right-rotary-paddle',
-      type: 'paddle',
+      id: 'ea4b139b-2723-42ec-ab27-7ab0aa48b9b2',
+      type: 'rotary-encoder',
       label: 'Right Rotary Paddle',
-      position: { x: 90, y: 25 },
-      size: { width: 5, height: 10 },
-      rotation: 15,
-      style: PURPLE_ROTARY,
+      position: {
+        x: 88.32,
+        y: 22.87
+      },
+      size: {
+        width: 3,
+        height: 10
+      },
+      rotation: -1,
+      labelRotation: 0,
+      style: {
+        shape: 'ellipse',
+        fill: '#a78bfa',
+        stroke: '#5b21b6',
+        opacity: 0.22
+      },
       notes: 'Knurled rotary paddle mounted on the grip.',
-      defaultBinding: '',
+      defaultBinding: ''
     },
     {
-      id: 'ctrl-mic',
+      id: '0d7eed39-312d-4520-8ad8-0fa284fadccf',
       type: 'button',
       label: 'Radio / PTT',
-      position: { x: 27, y: 36 },
-      size: { width: 6, height: 6 },
+      position: {
+        x: 27,
+        y: 37.93
+      },
+      size: {
+        width: 5,
+        height: 5
+      },
       rotation: 0,
-      style: PINK,
-      defaultBinding: 'Push-to-Talk',
+      labelRotation: 0,
+      style: {
+        shape: 'circle',
+        fill: '#f472b6',
+        stroke: '#9d174d',
+        opacity: 0.22
+      },
+      defaultBinding: 'Push-to-Talk'
     },
     {
-      id: 'ctrl-wiper',
+      id: '2856bd70-f247-439a-b535-904b31c416bf',
       type: 'button',
       label: 'Wiper',
-      position: { x: 67, y: 36 },
-      size: { width: 6, height: 6 },
+      position: {
+        x: 68.42,
+        y: 38.71
+      },
+      size: {
+        width: 5,
+        height: 5
+      },
       rotation: 0,
-      style: PINK,
-      defaultBinding: 'Wiper Toggle',
+      labelRotation: 0,
+      style: {
+        shape: 'circle',
+        fill: '#f472b6',
+        stroke: '#9d174d',
+        opacity: 0.22
+      },
+      defaultBinding: 'Wiper Toggle'
     },
     {
-      id: 'ctrl-multi',
+      id: '4cd86e32-66b9-4a99-8fcf-6b6fa144923c',
       type: 'funky-switch',
       label: 'MULTI',
-      position: { x: 25, y: 46 },
-      size: { width: 5, height: 5 },
+      position: {
+        x: 25.13,
+        y: 47.16
+      },
+      size: {
+        width: 4,
+        height: 4
+      },
       rotation: 0,
-      style: FUNKY,
+      labelRotation: 0,
+      style: {
+        shape: 'rect',
+        fill: '#fbbf24',
+        stroke: '#92400e',
+        opacity: 0.22
+      },
       notes: '7-way directional switch (N/NE/E/SE/S/SW/W + center push) for quick multi-function access.',
-      defaultBinding: 'Multi-function Adjustment',
+      defaultBinding: 'Multi-function Adjustment'
     },
     {
-      id: 'ctrl-menu',
+      id: '514cc422-a061-421b-8c8b-76fa975ac435',
       type: 'funky-switch',
       label: 'MENU',
-      position: { x: 70, y: 46 },
-      size: { width: 5, height: 5 },
+      position: {
+        x: 72.19,
+        y: 48.13
+      },
+      size: {
+        width: 4,
+        height: 4
+      },
       rotation: 0,
-      style: FUNKY,
+      labelRotation: 0,
+      style: {
+        shape: 'rect',
+        fill: '#fbbf24',
+        stroke: '#92400e',
+        opacity: 0.22
+      },
       notes: '7-way directional switch (N/NE/E/SE/S/SW/W + center push) for dash menu navigation.',
-      defaultBinding: 'Menu Navigation',
+      defaultBinding: 'Menu Navigation'
     },
     {
-      id: 'ctrl-ok',
+      id: 'a9785aa6-1b40-4656-82fa-543bd797d7bc',
       type: 'button',
       label: 'OK',
-      position: { x: 26, y: 56 },
-      size: { width: 6, height: 6 },
+      position: {
+        x: 26.39,
+        y: 56.58
+      },
+      size: {
+        width: 5,
+        height: 5
+      },
       rotation: 0,
-      style: RED,
-      defaultBinding: 'Confirm',
+      labelRotation: 0,
+      style: {
+        shape: 'circle',
+        fill: '#f87171',
+        stroke: '#991b1b',
+        opacity: 0.22
+      },
+      defaultBinding: 'Confirm'
     },
     {
-      id: 'ctrl-right-function',
+      id: 'b0e85b62-3fbf-49b7-ac4f-1dcffebe6426',
       type: 'button',
       label: 'Right Function Button',
-      position: { x: 68, y: 56 },
-      size: { width: 6, height: 6 },
+      position: {
+        x: 68.26,
+        y: 56.39
+      },
+      size: {
+        width: 5,
+        height: 5
+      },
       rotation: 0,
-      style: TEAL,
-      defaultBinding: '',
+      labelRotation: 0,
+      style: {
+        shape: 'circle',
+        fill: '#22d3ee',
+        stroke: '#0e7490',
+        opacity: 0.22
+      },
+      defaultBinding: ''
     },
     {
-      id: 'ctrl-left-thumbstick',
+      id: 'cd39c8c2-33f5-4038-a6a0-6484013d7f71',
       type: 'joystick',
       label: 'Left Thumbstick',
-      position: { x: 28, y: 71 },
-      size: { width: 6, height: 6 },
+      position: {
+        x: 27.74,
+        y: 71
+      },
+      size: {
+        width: 5,
+        height: 5
+      },
       rotation: 0,
-      style: PURPLE_KNOB,
-      defaultBinding: '',
+      labelRotation: 0,
+      style: {
+        shape: 'circle',
+        fill: '#c084fc',
+        stroke: '#6b21a8',
+        opacity: 0.22
+      },
+      defaultBinding: ''
     },
     {
-      id: 'ctrl-right-thumbstick',
+      id: '633d0e61-218e-4085-8001-9d36ef68cc89',
       type: 'joystick',
       label: 'Right Thumbstick',
-      position: { x: 66, y: 71 },
-      size: { width: 6, height: 6 },
+      position: {
+        x: 67.16,
+        y: 70.23
+      },
+      size: {
+        width: 5,
+        height: 5
+      },
       rotation: 0,
-      style: TEAL,
-      defaultBinding: '',
+      labelRotation: 0,
+      style: {
+        shape: 'circle',
+        fill: '#22d3ee',
+        stroke: '#0e7490',
+        opacity: 0.22
+      },
+      defaultBinding: ''
     },
     {
-      id: 'ctrl-map',
+      id: 'b6594d64-1d2e-4c70-b41c-3aa891ff529d',
       type: 'rotary-encoder',
       label: 'MAP',
-      position: { x: 35, y: 66 },
-      size: { width: 5, height: 5 },
+      position: {
+        x: 34.23,
+        y: 61.55
+      },
+      size: {
+        width: 5,
+        height: 5
+      },
       rotation: 0,
-      style: PURPLE_KNOB,
-      defaultBinding: 'Engine Map Select',
+      labelRotation: 0,
+      style: {
+        shape: 'circle',
+        fill: '#c084fc',
+        stroke: '#6b21a8',
+        opacity: 0.22
+      },
+      defaultBinding: 'Engine Map Select'
     },
     {
-      id: 'ctrl-delta-left',
+      id: 'f4c52b77-9291-40ba-a084-c98c2cfc69e5',
       type: 'rotary-encoder',
       label: 'DELTA (left)',
-      position: { x: 42, y: 62 },
-      size: { width: 5, height: 5 },
+      position: {
+        x: 41.74,
+        y: 71.09
+      },
+      size: {
+        width: 5,
+        height: 5
+      },
       rotation: 0,
-      style: PURPLE_KNOB,
-      defaultBinding: '',
+      labelRotation: 0,
+      style: {
+        shape: 'circle',
+        fill: '#c084fc',
+        stroke: '#c084fc',
+        opacity: 0.22
+      },
+      defaultBinding: ''
     },
     {
-      id: 'ctrl-delta-right',
+      id: 'c20f7a92-b372-46b3-a34a-5c1aa1b1cb92',
       type: 'rotary-encoder',
       label: 'DELTA (right)',
-      position: { x: 53, y: 62 },
-      size: { width: 5, height: 5 },
+      position: {
+        x: 53.39,
+        y: 70.7
+      },
+      size: {
+        width: 5,
+        height: 5
+      },
       rotation: 0,
-      style: PURPLE_KNOB,
-      defaultBinding: '',
+      labelRotation: 0,
+      style: {
+        shape: 'circle',
+        fill: '#c084fc',
+        stroke: '#6b21a8',
+        opacity: 0.22
+      },
+      defaultBinding: ''
     },
     {
-      id: 'ctrl-mode',
+      id: 'e9f0d519-274d-4c07-95e6-c4c66f463cbf',
       type: 'rotary-encoder',
       label: 'MODE',
-      position: { x: 60, y: 66 },
-      size: { width: 5, height: 5 },
+      position: {
+        x: 61.03,
+        y: 62.32
+      },
+      size: {
+        width: 5,
+        height: 5
+      },
       rotation: 0,
-      style: PURPLE_KNOB,
-      defaultBinding: 'Dash Mode',
-    },
+      labelRotation: 0,
+      style: {
+        shape: 'circle',
+        fill: '#c084fc',
+        stroke: '#6b21a8',
+        opacity: 0.22
+      },
+      defaultBinding: 'Dash Mode'
+    }
   ],
 }

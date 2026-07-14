@@ -41,6 +41,7 @@ export function createControlObject(
     position,
     size: DEFAULT_SIZE_BY_TYPE[type],
     rotation: 0,
+    labelRotation: 0,
     style: { ...DEFAULT_STYLE },
     notes: '',
     defaultBinding: '',
