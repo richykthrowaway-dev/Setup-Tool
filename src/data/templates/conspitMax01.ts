@@ -27,16 +27,20 @@ const PLACEHOLDER_IMAGE_SVG = `
 
 const PLACEHOLDER_IMAGE_URL = `data:image/svg+xml;utf8,${encodeURIComponent(PLACEHOLDER_IMAGE_SVG)}`
 
-const WHITE = { shape: 'rect', fill: '#f8fafc', stroke: '#94a3b8', opacity: 0.6 } as const
-const TEAL = { shape: 'circle', fill: '#22d3ee', stroke: '#0e7490', opacity: 0.55 } as const
-const ORANGE = { shape: 'circle', fill: '#fb923c', stroke: '#9a3412', opacity: 0.55 } as const
-const GREEN = { shape: 'circle', fill: '#4ade80', stroke: '#15803d', opacity: 0.55 } as const
-const GOLD = { shape: 'circle', fill: '#facc15', stroke: '#a16207', opacity: 0.55 } as const
-const FUNKY = { shape: 'rect', fill: '#fbbf24', stroke: '#92400e', opacity: 0.55 } as const
-const PURPLE_ROTARY = { shape: 'rect', fill: '#a78bfa', stroke: '#5b21b6', opacity: 0.55 } as const
-const PINK = { shape: 'circle', fill: '#f472b6', stroke: '#9d174d', opacity: 0.55 } as const
-const RED = { shape: 'circle', fill: '#f87171', stroke: '#991b1b', opacity: 0.55 } as const
-const PURPLE_KNOB = { shape: 'circle', fill: '#c084fc', stroke: '#6b21a8', opacity: 0.55 } as const
+// Fill opacity kept low and uniform across the palette — the stroke ring
+// (full strength) carries the color identity, the fill is just a faint tint.
+// Hues loosely echo the real button colors on the physical device.
+const CHIP_OPACITY = 0.22
+const WHITE = { shape: 'rect', fill: '#f8fafc', stroke: '#94a3b8', opacity: 0.35 } as const
+const TEAL = { shape: 'circle', fill: '#22d3ee', stroke: '#0e7490', opacity: CHIP_OPACITY } as const
+const ORANGE = { shape: 'circle', fill: '#fb923c', stroke: '#9a3412', opacity: CHIP_OPACITY } as const
+const GREEN = { shape: 'circle', fill: '#4ade80', stroke: '#15803d', opacity: CHIP_OPACITY } as const
+const GOLD = { shape: 'circle', fill: '#facc15', stroke: '#a16207', opacity: CHIP_OPACITY } as const
+const FUNKY = { shape: 'rect', fill: '#fbbf24', stroke: '#92400e', opacity: CHIP_OPACITY } as const
+const PURPLE_ROTARY = { shape: 'rect', fill: '#a78bfa', stroke: '#5b21b6', opacity: CHIP_OPACITY } as const
+const PINK = { shape: 'circle', fill: '#f472b6', stroke: '#9d174d', opacity: CHIP_OPACITY } as const
+const RED = { shape: 'circle', fill: '#f87171', stroke: '#991b1b', opacity: CHIP_OPACITY } as const
+const PURPLE_KNOB = { shape: 'circle', fill: '#c084fc', stroke: '#6b21a8', opacity: CHIP_OPACITY } as const
 
 export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
   id: 'example-conspit-max-01',
@@ -206,7 +210,7 @@ export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
       position: { x: 28, y: 71 },
       size: { width: 6, height: 6 },
       rotation: 0,
-      style: { shape: 'circle', fill: '#c084fc', stroke: '#6b21a8', opacity: 0.55 },
+      style: PURPLE_KNOB,
       defaultBinding: '',
     },
     {

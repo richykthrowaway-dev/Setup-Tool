@@ -3,8 +3,12 @@ import { Circle, Ellipse, Group, Rect, Text, Transformer } from 'react-konva'
 import type Konva from 'konva'
 import type { ControlObject } from '../../types/models'
 import { controlToPixelCenter, pixelCenterToNormalizedPosition, pixelSizeToNormalizedSize } from '../../lib/coordinates'
+import { estimateChipWidth } from '../../lib/labelChip'
 
 const MIN_SIZE_PERCENT = 1
+const LABEL_FONT_SIZE = 11
+const LABEL_CHIP_HEIGHT = 20
+const SELECTED_RING_COLOR = '#38bdf8'
 
 interface ControlShapeProps {
   control: ControlObject
@@ -44,12 +48,21 @@ export function ControlShape({
     imagePixelHeight,
   )
 
-  const shapeProps = {
+  // A thin outline "hotspot" reads as an annotation, not a paint-bucket fill:
+  // low fill opacity, a crisp full-strength ring, and a soft shadow for depth.
+  const nodeOpacity = dimmed ? 0.4 : 1
+  const markerProps = {
     fill: control.style.fill,
-    stroke: isSelected ? '#facc15' : control.style.stroke,
-    strokeWidth: isSelected ? 3 : 2,
-    opacity: dimmed ? control.style.opacity * 0.4 : control.style.opacity,
+    fillEnabled: true,
+    stroke: isSelected ? SELECTED_RING_COLOR : control.style.stroke,
+    strokeWidth: isSelected ? 2.5 : 2,
+    opacity: nodeOpacity,
+    shadowColor: 'black',
+    shadowBlur: 8,
+    shadowOpacity: 0.35,
+    shadowOffsetY: 2,
   }
+  const fillOpacity = control.style.opacity
 
   function handleDragEnd(e: Konva.KonvaEventObject<DragEvent>) {
     const node = e.target
@@ -87,6 +100,9 @@ export function ControlShape({
     onChange?.(control.id, { size, position, rotation: node.rotation() })
   }
 
+  const chipWidth = estimateChipWidth(control.label, LABEL_FONT_SIZE)
+  const chipY = pxHeight / 2 + 6
+
   return (
     <>
       <Group
@@ -101,29 +117,57 @@ export function ControlShape({
         onTransformEnd={editable ? handleTransformEnd : undefined}
       >
         {control.style.shape === 'rect' && (
-          <Rect x={-pxWidth / 2} y={-pxHeight / 2} width={pxWidth} height={pxHeight} {...shapeProps} />
+          <Rect
+            x={-pxWidth / 2}
+            y={-pxHeight / 2}
+            width={pxWidth}
+            height={pxHeight}
+            cornerRadius={Math.min(pxWidth, pxHeight) * 0.2}
+            fillOpacity={fillOpacity}
+            {...markerProps}
+          />
         )}
         {control.style.shape === 'circle' && (
-          <Circle radius={(pxWidth + pxHeight) / 4} {...shapeProps} />
+          <Circle radius={(pxWidth + pxHeight) / 4} fillOpacity={fillOpacity} {...markerProps} />
         )}
         {control.style.shape === 'ellipse' && (
-          <Ellipse radiusX={pxWidth / 2} radiusY={pxHeight / 2} {...shapeProps} />
+          <Ellipse radiusX={pxWidth / 2} radiusY={pxHeight / 2} fillOpacity={fillOpacity} {...markerProps} />
         )}
-        <Text
-          text={control.label}
-          fontSize={12}
-          fill="#0f172a"
-          align="center"
-          width={Math.max(pxWidth, 60)}
-          x={-Math.max(pxWidth, 60) / 2}
-          y={pxHeight / 2 + 4}
-        />
+
+        <Group x={-chipWidth / 2} y={chipY} opacity={nodeOpacity}>
+          <Rect
+            width={chipWidth}
+            height={LABEL_CHIP_HEIGHT}
+            cornerRadius={LABEL_CHIP_HEIGHT / 2}
+            fill="rgba(15, 23, 42, 0.85)"
+            stroke="rgba(255, 255, 255, 0.12)"
+            strokeWidth={1}
+            shadowColor="black"
+            shadowBlur={6}
+            shadowOpacity={0.35}
+            shadowOffsetY={1}
+          />
+          <Text
+            text={control.label}
+            fontSize={LABEL_FONT_SIZE}
+            fontStyle="600"
+            fill="#f8fafc"
+            width={chipWidth}
+            height={LABEL_CHIP_HEIGHT}
+            align="center"
+            verticalAlign="middle"
+          />
+        </Group>
       </Group>
       {isSelected && editable && (
         <Transformer
           ref={transformerRef}
           rotateEnabled
           keepRatio={false}
+          anchorCornerRadius={4}
+          anchorStroke={SELECTED_RING_COLOR}
+          anchorFill="#0f172a"
+          borderStroke={SELECTED_RING_COLOR}
           boundBoxFunc={(oldBox, newBox) =>
             newBox.width < 6 || newBox.height < 6 ? oldBox : newBox
           }

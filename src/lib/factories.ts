@@ -7,11 +7,13 @@ import type {
   UserProfile,
 } from '../types/models'
 
+// Low fill opacity + a crisp full-strength stroke reads as a clean outline
+// "hotspot" annotation rather than a flat paint-bucket fill over the photo.
 const DEFAULT_STYLE = {
   shape: 'rect' as const,
-  fill: '#22d3ee',
-  stroke: '#0e7490',
-  opacity: 0.55,
+  fill: '#38bdf8',
+  stroke: '#0ea5e9',
+  opacity: 0.25,
 }
 
 const DEFAULT_SIZE_BY_TYPE: Record<ControlType, { width: number; height: number }> = {

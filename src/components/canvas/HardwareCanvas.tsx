@@ -54,7 +54,20 @@ export function HardwareCanvas({
   }
 
   return (
-    <div ref={ref} className="w-full min-w-0">
+    <div
+      ref={ref}
+      className="w-full min-w-0"
+      style={{
+        // Transparency checkerboard — the industry-standard way to signal
+        // "this area is see-through," regardless of how light or dark the
+        // uploaded image is. Fully opaque photos simply cover it entirely.
+        backgroundImage:
+          'linear-gradient(45deg, #cbd5e1 25%, transparent 25%), linear-gradient(-45deg, #cbd5e1 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #cbd5e1 75%), linear-gradient(-45deg, transparent 75%, #cbd5e1 75%)',
+        backgroundSize: '20px 20px',
+        backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
+        backgroundColor: '#f1f5f9',
+      }}
+    >
       {stageWidth > 0 && (
         <Stage width={stageWidth} height={stageHeight} onClick={handleStageClick} onTap={handleStageClick}>
           <Layer>
