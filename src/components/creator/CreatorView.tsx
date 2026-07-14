@@ -1,0 +1,220 @@
+import { useRef, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
+import { useTemplateStore } from '../../store/templateStore'
+import { useLibraryStore } from '../../store/libraryStore'
+import { HardwareCanvas } from '../canvas/HardwareCanvas'
+import { ImageUploader } from '../shared/ImageUploader'
+import { ControlToolbar } from './ControlToolbar'
+import { ControlPropertiesPanel } from './ControlPropertiesPanel'
+import { Field } from '../shared/Field'
+import { exportHardwareTemplate, importHardwareTemplate, ImportValidationError } from '../../services/io/exportImport'
+import { CONSPIT_MAX_01_TEMPLATE } from '../../data/templates/conspitMax01'
+import { isSupabaseConfigured } from '../../lib/config'
+import type { ControlType } from '../../types/models'
+
+export function CreatorView() {
+  const { templateId } = useParams()
+  const navigate = useNavigate()
+
+  const template = useTemplateStore((s) => s.template)
+  const selectedControlId = useTemplateStore((s) => s.selectedControlId)
+  const startNewTemplate = useTemplateStore((s) => s.startNewTemplate)
+  const startTemplateFromPreset = useTemplateStore((s) => s.startTemplateFromPreset)
+  const updateMeta = useTemplateStore((s) => s.updateMeta)
+  const setIsPublic = useTemplateStore((s) => s.setIsPublic)
+  const setNotes = useTemplateStore((s) => s.setNotes)
+  const addControl = useTemplateStore((s) => s.addControl)
+  const updateControl = useTemplateStore((s) => s.updateControl)
+  const removeControl = useTemplateStore((s) => s.removeControl)
+  const selectControl = useTemplateStore((s) => s.selectControl)
+  const saveTemplate = useTemplateStore((s) => s.saveTemplate)
+  const loadTemplate = useTemplateStore((s) => s.loadTemplate)
+  const saveError = useTemplateStore((s) => s.saveError)
+
+  const refreshTemplates = useLibraryStore((s) => s.refreshTemplates)
+
+  const [pendingType, setPendingType] = useState<ControlType | null>(null)
+  const [importError, setImportError] = useState<string | null>(null)
+  const importInputRef = useRef<HTMLInputElement>(null)
+
+  const selectedControl = template?.controls.find((c) => c.id === selectedControlId) ?? null
+
+  async function handleSave() {
+    await saveTemplate()
+    await refreshTemplates()
+    const saved = useTemplateStore.getState().template
+    if (saved && !useTemplateStore.getState().saveError && templateId === 'new') {
+      navigate(`/creator/${saved.id}`, { replace: true })
+    }
+  }
+
+  function handleCanvasClick(position: { x: number; y: number }) {
+    if (!pendingType) return
+    addControl(pendingType, position)
+    setPendingType(null)
+  }
+
+  async function handleImportFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    e.target.value = ''
+    if (!file) return
+    try {
+      const imported = await importHardwareTemplate(file)
+      loadTemplate(imported)
+      setImportError(null)
+    } catch (err) {
+      setImportError(err instanceof ImportValidationError ? err.message : 'Import failed.')
+    }
+  }
+
+  if (!template) {
+    return (
+      <div className="mx-auto flex max-w-lg flex-col items-center gap-6 py-16 text-center">
+        <div className="flex flex-col items-center gap-4">
+          <h2 className="text-lg font-semibold text-slate-100">Start a hardware template</h2>
+          <p className="text-sm text-slate-400">
+            Upload a photo of any sim racing device — wheel, button box, shifter, pedals, dash — and turn it into an
+            interactive, reusable template.
+          </p>
+          <ImageUploader
+            label="Upload image to start"
+            onImageLoaded={({ imageUrl, width, height }) =>
+              startNewTemplate({ manufacturer: '', model: 'Untitled Device', imageUrl, imageWidth: width, imageHeight: height })
+            }
+          />
+        </div>
+
+        <div className="w-full rounded-lg border border-slate-700 bg-slate-900 p-4">
+          <h3 className="text-sm font-semibold text-slate-100">Have a Conspit MAX 01?</h3>
+          <p className="mt-1 text-xs text-slate-400">
+            Upload your own photo of it and we'll apply the 20-control layout already mapped for that device —
+            just adjust positions to match your exact photo.
+          </p>
+          <ImageUploader
+            label="Upload your MAX 01 photo"
+            className="mt-3"
+            onImageLoaded={({ imageUrl, width, height }) =>
+              startTemplateFromPreset(CONSPIT_MAX_01_TEMPLATE, { imageUrl, imageWidth: width, imageHeight: height })
+            }
+          />
+        </div>
+
+        <div className="flex flex-col items-center gap-2">
+          <button
+            type="button"
+            onClick={() => importInputRef.current?.click()}
+            className="rounded-md border border-slate-600 px-4 py-2 text-sm text-slate-200 hover:border-slate-400"
+          >
+            Import a template JSON file
+          </button>
+          <button
+            type="button"
+            onClick={() => loadTemplate(CONSPIT_MAX_01_TEMPLATE)}
+            className="text-xs text-slate-500 underline hover:text-slate-300"
+          >
+            Or preview the MAX 01 example on a placeholder image
+          </button>
+        </div>
+        <input ref={importInputRef} type="file" accept="application/json" className="hidden" onChange={handleImportFile} />
+        {importError && <p className="text-sm text-red-400">{importError}</p>}
+      </div>
+    )
+  }
+
+  return (
+    <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_320px]">
+      <div className="flex min-w-0 flex-col gap-4">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          <input
+            className="input"
+            placeholder="Manufacturer"
+            value={template.meta.manufacturer}
+            onChange={(e) => updateMeta({ manufacturer: e.target.value })}
+          />
+          <input
+            className="input"
+            placeholder="Model"
+            value={template.meta.model}
+            onChange={(e) => updateMeta({ model: e.target.value })}
+          />
+          <input
+            className="input"
+            placeholder="Description (optional)"
+            value={template.meta.description ?? ''}
+            onChange={(e) => updateMeta({ description: e.target.value })}
+          />
+        </div>
+
+        {isSupabaseConfigured && (
+          <label className="flex w-fit items-center gap-2 text-sm text-slate-300">
+            <input
+              type="checkbox"
+              checked={template.isPublic ?? false}
+              onChange={(e) => setIsPublic(e.target.checked)}
+            />
+            Make this template public (visible to other users in the community gallery)
+          </label>
+        )}
+
+        <Field label="Notes (template-level, included in export/import)">
+          <textarea
+            className="input"
+            rows={3}
+            placeholder="e.g. photo taken under warm lighting, colors may look off; still need to verify pedal calibration…"
+            value={template.notes ?? ''}
+            onChange={(e) => setNotes(e.target.value)}
+          />
+        </Field>
+
+        <ControlToolbar pendingType={pendingType} onSelectType={setPendingType} />
+
+        <div className="overflow-hidden rounded-lg border border-slate-700 bg-slate-900">
+          <HardwareCanvas
+            imageUrl={template.imageUrl}
+            imageWidth={template.imageWidth}
+            imageHeight={template.imageHeight}
+            controls={template.controls}
+            selectedControlId={selectedControlId}
+            editable
+            onSelectControl={selectControl}
+            onChangeControl={updateControl}
+            onCanvasClick={handleCanvasClick}
+          />
+        </div>
+
+        <div className="flex flex-wrap items-center gap-3">
+          <button
+            type="button"
+            onClick={handleSave}
+            className="rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-500"
+          >
+            Save template (v{template.version})
+          </button>
+          <button
+            type="button"
+            onClick={() => exportHardwareTemplate(template)}
+            className="rounded-md border border-slate-600 px-4 py-2 text-sm text-slate-200 hover:border-slate-400"
+          >
+            Export JSON
+          </button>
+          <button
+            type="button"
+            onClick={() => importInputRef.current?.click()}
+            className="rounded-md border border-slate-600 px-4 py-2 text-sm text-slate-200 hover:border-slate-400"
+          >
+            Import JSON
+          </button>
+          <span className="text-xs text-slate-500">{template.controls.length} control(s)</span>
+        </div>
+        {saveError && <p className="text-sm text-red-400">{saveError}</p>}
+        <input ref={importInputRef} type="file" accept="application/json" className="hidden" onChange={handleImportFile} />
+        {importError && <p className="text-sm text-red-400">{importError}</p>}
+      </div>
+
+      <aside className="rounded-lg border border-slate-700 bg-slate-900 p-4">
+        <h3 className="mb-3 text-sm font-semibold text-slate-200">Control properties</h3>
+        <ControlPropertiesPanel control={selectedControl} onChange={updateControl} onDelete={removeControl} />
+      </aside>
+    </div>
+  )
+}
