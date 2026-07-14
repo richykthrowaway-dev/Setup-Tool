@@ -228,6 +228,17 @@ export function ConfiguratorView({ initialTemplateId, initialProfileId, initialV
 
             {viewMode === 'canvas' ? (
               <div className="overflow-hidden rounded-lg border border-slate-700 bg-slate-900">
+                <div className="flex items-center justify-between border-b border-slate-700 bg-slate-800 px-3 py-2">
+                  <span className="text-xs font-medium text-slate-300">Canvas Labels</span>
+                  <button
+                    type="button"
+                    onClick={cycleCanvasLabelDisplayMode}
+                    className="rounded-md border border-slate-600 px-2 py-1 text-xs text-slate-200 hover:border-slate-400"
+                    title="Cycle through: Button numbers, Control names, Assigned functions"
+                  >
+                    {displayModeLabels[canvasLabelDisplayMode]}
+                  </button>
+                </div>
                 <HardwareCanvas
                   imageUrl={template.imageUrl}
                   imageWidth={template.imageWidth}
@@ -238,6 +249,7 @@ export function ConfiguratorView({ initialTemplateId, initialProfileId, initialV
                   onSelectControl={setSelectedControlId}
                   isControlDimmed={(c) => !profile.bindings.some((b) => b.controlId === c.id)}
                   showNumbersOnly={true}
+                  getBindingForControl={(controlId) => profile.bindings.find((b) => b.controlId === controlId)}
                   canvasLabelDisplayMode={canvasLabelDisplayMode}
                 />
               </div>

@@ -32,8 +32,8 @@ export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
   controls: [
     {
       id: '775e818d-a3a3-40aa-b418-7c4975422d92',
-      type: 'rotary-encoder',
-      label: 'Rotary 1 (top left)',
+      type: 'button',
+      label: 'Button 1 (top left)',
       position: {
         x: 17.29,
         y: 17.2
@@ -55,8 +55,8 @@ export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
     },
     {
       id: '657ea92c-ea0c-4a0d-a541-f73ee4f3c995',
-      type: 'rotary-encoder',
-      label: 'Rotary 2 (top right)',
+      type: 'button',
+      label: 'Button 2 (top right)',
       position: {
         x: 79.42,
         y: 17.77
@@ -79,7 +79,7 @@ export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
     {
       id: '6620bcd1-d080-4cce-a6ad-5655f710c7c6',
       type: 'button',
-      label: 'Button 1 (upper left)',
+      label: 'Button 3 (upper left)',
       position: {
         x: 24.78,
         y: 21.03
@@ -101,7 +101,7 @@ export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
     {
       id: '6a71a61c-2fde-4201-85be-a9cbc20b94d0',
       type: 'button',
-      label: 'Button 2 (upper right)',
+      label: 'Button 4 (upper right)',
       position: {
         x: 72.2,
         y: 21.61
@@ -169,7 +169,7 @@ export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
     {
       id: '5530dcd8-6095-4168-bb1f-974e63876ef0',
       type: 'button',
-      label: 'Button 3 (left grip)',
+      label: 'Button 5 (left grip)',
       position: {
         x: 28.16,
         y: 37.16
@@ -191,7 +191,7 @@ export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
     {
       id: 'bd0f46c6-db6a-475b-9e09-bfc37facd749',
       type: 'button',
-      label: 'Button 4 (right grip)',
+      label: 'Button 6 (right grip)',
       position: {
         x: 68.81,
         y: 38.13
@@ -259,7 +259,7 @@ export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
     {
       id: '1b3c86a3-b9c7-45cd-b3a1-7af9bb51a116',
       type: 'button',
-      label: 'Button 5 (large, left)',
+      label: 'Button 7 (large, left)',
       position: {
         x: 27.16,
         y: 55.81
@@ -281,7 +281,7 @@ export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
     {
       id: '2a83be73-df63-4b58-91d0-1e3e47a8f5cb',
       type: 'button',
-      label: 'Button 6 (right)',
+      label: 'Button 8 (right)',
       position: {
         x: 69.42,
         y: 56.39
@@ -302,8 +302,8 @@ export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
     },
     {
       id: '52356cf8-3288-4278-b809-86125032abd0',
-      type: 'joystick',
-      label: 'Thumbstick (left)',
+      type: 'button',
+      label: 'Button 9 (left)',
       position: {
         x: 27.74,
         y: 71
@@ -324,8 +324,8 @@ export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
     },
     {
       id: 'd6da7377-926f-4bad-a041-b9baaf84aae7',
-      type: 'joystick',
-      label: 'Thumbstick (right)',
+      type: 'button',
+      label: 'Button 10 (right)',
       position: {
         x: 67.68,
         y: 71
@@ -347,7 +347,7 @@ export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
     {
       id: '58b3af1c-910d-4477-a0a0-8b4f0452105f',
       type: 'rotary-encoder',
-      label: 'Rotary 3 (lower left)',
+      label: 'Rotary 1 (lower left)',
       position: {
         x: 34.62,
         y: 62.32
@@ -369,7 +369,7 @@ export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
     {
       id: '4793409a-9250-4674-b687-efa7917564a7',
       type: 'rotary-encoder',
-      label: 'Rotary 4 (bottom left)',
+      label: 'Rotary 2 (bottom left)',
       position: {
         x: 41.74,
         y: 71.09
@@ -391,7 +391,7 @@ export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
     {
       id: 'e552d635-31d1-4c42-a395-528b917502d3',
       type: 'rotary-encoder',
-      label: 'Rotary 5 (bottom right)',
+      label: 'Rotary 3 (bottom right)',
       position: {
         x: 53.39,
         y: 70.7
@@ -413,7 +413,7 @@ export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
     {
       id: 'a9acd265-50f1-4b20-965d-f6d13174357e',
       type: 'rotary-encoder',
-      label: 'Rotary 6 (lower right)',
+      label: 'Rotary 4 (lower right)',
       position: {
         x: 61.68,
         y: 62.51
