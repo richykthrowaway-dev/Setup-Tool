@@ -18,6 +18,7 @@ const DEFAULT_SIZE_BY_TYPE: Record<ControlType, { width: number; height: number 
   button: { width: 4, height: 4 },
   'rotary-encoder': { width: 6, height: 6 },
   'toggle-switch': { width: 3, height: 6 },
+  'funky-switch': { width: 6, height: 6 },
   paddle: { width: 10, height: 4 },
   joystick: { width: 8, height: 8 },
   slider: { width: 10, height: 3 },

@@ -2,141 +2,262 @@ import type { HardwareTemplate } from '../../types/models'
 
 // This is a demo fixture only — proof that the engine works, not a
 // hardcoded "MAX 01 mode". Any hardware image can produce an equivalent
-// HardwareTemplate through the Template Creator. The image below is a
-// generated placeholder standing in for a real product photo.
+// HardwareTemplate through the Template Creator.
+//
+// The control layout below is mapped from an actual Conspit MAX 01 product
+// photo (all 20 physical controls, positioned/sized to match). The image
+// itself is still a placeholder pending the real photo file — swap
+// PLACEHOLDER_IMAGE_URL (and IMAGE_WIDTH/IMAGE_HEIGHT if the aspect ratio
+// differs) for a hosted URL of the real photo and the overlay will line up.
 
-const IMAGE_WIDTH = 1200
-const IMAGE_HEIGHT = 700
+const IMAGE_WIDTH = 1500
+const IMAGE_HEIGHT = 1000
 
 const PLACEHOLDER_IMAGE_SVG = `
 <svg xmlns="http://www.w3.org/2000/svg" width="${IMAGE_WIDTH}" height="${IMAGE_HEIGHT}">
-  <rect width="100%" height="100%" fill="#1e293b" />
-  <rect x="20" y="20" width="${IMAGE_WIDTH - 40}" height="${IMAGE_HEIGHT - 40}" rx="24" fill="#111827" stroke="#334155" stroke-width="3" />
-  <text x="50%" y="46%" text-anchor="middle" fill="#475569" font-family="system-ui, sans-serif" font-size="40" font-weight="600">
+  <rect width="100%" height="100%" fill="#f8fafc" />
+  <rect x="20" y="20" width="${IMAGE_WIDTH - 40}" height="${IMAGE_HEIGHT - 40}" rx="24" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="3" />
+  <text x="50%" y="46%" text-anchor="middle" fill="#64748b" font-family="system-ui, sans-serif" font-size="40" font-weight="600">
     Conspit MAX 01
   </text>
-  <text x="50%" y="54%" text-anchor="middle" fill="#334155" font-family="system-ui, sans-serif" font-size="18">
-    Placeholder image — replace by uploading a real device photo
+  <text x="50%" y="54%" text-anchor="middle" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="18">
+    Placeholder — swap in the real product photo, layout is already mapped
   </text>
 </svg>`.trim()
 
 const PLACEHOLDER_IMAGE_URL = `data:image/svg+xml;utf8,${encodeURIComponent(PLACEHOLDER_IMAGE_SVG)}`
+
+const WHITE = { shape: 'rect', fill: '#f8fafc', stroke: '#94a3b8', opacity: 0.6 } as const
+const TEAL = { shape: 'circle', fill: '#22d3ee', stroke: '#0e7490', opacity: 0.55 } as const
+const ORANGE = { shape: 'circle', fill: '#fb923c', stroke: '#9a3412', opacity: 0.55 } as const
+const GREEN = { shape: 'circle', fill: '#4ade80', stroke: '#15803d', opacity: 0.55 } as const
+const GOLD = { shape: 'circle', fill: '#facc15', stroke: '#a16207', opacity: 0.55 } as const
+const FUNKY = { shape: 'rect', fill: '#fbbf24', stroke: '#92400e', opacity: 0.55 } as const
+const PURPLE_ROTARY = { shape: 'rect', fill: '#a78bfa', stroke: '#5b21b6', opacity: 0.55 } as const
+const PINK = { shape: 'circle', fill: '#f472b6', stroke: '#9d174d', opacity: 0.55 } as const
+const RED = { shape: 'circle', fill: '#f87171', stroke: '#991b1b', opacity: 0.55 } as const
+const PURPLE_KNOB = { shape: 'circle', fill: '#c084fc', stroke: '#6b21a8', opacity: 0.55 } as const
 
 export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
   id: 'example-conspit-max-01',
   meta: {
     manufacturer: 'Conspit',
     model: 'MAX 01',
-    description: 'Example template shipped with SuperMapper to demonstrate the template engine.',
+    description: 'Example template shipped with SuperMapper — control layout mapped from a real product photo.',
   },
   imageUrl: PLACEHOLDER_IMAGE_URL,
   imageWidth: IMAGE_WIDTH,
   imageHeight: IMAGE_HEIGHT,
   version: 1,
+  isPublic: false,
   createdAt: '2026-01-01T00:00:00.000Z',
   updatedAt: '2026-01-01T00:00:00.000Z',
   controls: [
     {
-      id: 'ctrl-left-rotary',
+      id: 'ctrl-set',
+      type: 'button',
+      label: 'SET',
+      position: { x: 8, y: 13 },
+      size: { width: 8, height: 5 },
+      rotation: -20,
+      style: WHITE,
+      defaultBinding: '',
+    },
+    {
+      id: 'ctrl-bias-flag',
+      type: 'button',
+      label: 'BIAS (flag)',
+      position: { x: 85, y: 13 },
+      size: { width: 8, height: 5 },
+      rotation: 20,
+      style: WHITE,
+      defaultBinding: '',
+    },
+    {
+      id: 'ctrl-drs',
       type: 'rotary-encoder',
-      label: 'Left Rotary Encoder',
-      position: { x: 12, y: 40 },
-      size: { width: 8, height: 14 },
+      label: 'DRS',
+      position: { x: 16, y: 17 },
+      size: { width: 6, height: 6 },
       rotation: 0,
-      style: { shape: 'circle', fill: '#22d3ee', stroke: '#0e7490', opacity: 0.55 },
-      notes: 'Push-click rotary, detented.',
-      defaultBinding: 'Brake Bias Adjustment',
+      style: TEAL,
+      notes: 'Push-click rotary.',
+      defaultBinding: 'DRS Activation',
     },
     {
-      id: 'ctrl-right-rotary',
+      id: 'ctrl-p-knob',
       type: 'rotary-encoder',
-      label: 'Right Rotary Encoder',
-      position: { x: 80, y: 40 },
-      size: { width: 8, height: 14 },
+      label: 'P',
+      position: { x: 78, y: 17 },
+      size: { width: 6, height: 6 },
       rotation: 0,
-      style: { shape: 'circle', fill: '#22d3ee', stroke: '#0e7490', opacity: 0.55 },
-      notes: 'Push-click rotary, detented.',
-      defaultBinding: 'Traction Control Adjustment',
+      style: ORANGE,
+      notes: 'Push-click rotary.',
+      defaultBinding: 'Pit Limiter',
     },
     {
-      id: 'ctrl-left-paddle',
+      id: 'ctrl-n',
+      type: 'button',
+      label: 'N',
+      position: { x: 24, y: 22 },
+      size: { width: 5, height: 6 },
+      rotation: 0,
+      style: GREEN,
+      defaultBinding: 'Neutral',
+    },
+    {
+      id: 'ctrl-fcy',
+      type: 'button',
+      label: 'FCY',
+      position: { x: 70, y: 22 },
+      size: { width: 5, height: 6 },
+      rotation: 0,
+      style: GOLD,
+      defaultBinding: 'Full Course Yellow Flag',
+    },
+    {
+      id: 'ctrl-left-rotary-paddle',
       type: 'paddle',
-      label: 'Left Paddle',
-      position: { x: 4, y: 12 },
-      size: { width: 14, height: 8 },
-      rotation: -8,
-      style: { shape: 'rect', fill: '#f97316', stroke: '#9a3412', opacity: 0.55 },
-      defaultBinding: 'Clutch / Shift Down',
+      label: 'Left Rotary Paddle',
+      position: { x: 5, y: 25 },
+      size: { width: 5, height: 10 },
+      rotation: -15,
+      style: PURPLE_ROTARY,
+      notes: 'Knurled rotary paddle mounted on the grip.',
+      defaultBinding: '',
     },
     {
-      id: 'ctrl-right-paddle',
+      id: 'ctrl-right-rotary-paddle',
       type: 'paddle',
-      label: 'Right Paddle',
-      position: { x: 82, y: 12 },
-      size: { width: 14, height: 8 },
-      rotation: 8,
-      style: { shape: 'rect', fill: '#f97316', stroke: '#9a3412', opacity: 0.55 },
-      defaultBinding: 'Shift Up',
-    },
-    {
-      id: 'ctrl-button-1',
-      type: 'button',
-      label: 'Button 1',
-      position: { x: 38, y: 24 },
-      size: { width: 5, height: 6 },
-      rotation: 0,
-      style: { shape: 'rect', fill: '#a3e635', stroke: '#3f6212', opacity: 0.55 },
+      label: 'Right Rotary Paddle',
+      position: { x: 90, y: 25 },
+      size: { width: 5, height: 10 },
+      rotation: 15,
+      style: PURPLE_ROTARY,
+      notes: 'Knurled rotary paddle mounted on the grip.',
       defaultBinding: '',
     },
     {
-      id: 'ctrl-button-2',
+      id: 'ctrl-mic',
       type: 'button',
-      label: 'Button 2',
-      position: { x: 46, y: 24 },
-      size: { width: 5, height: 6 },
+      label: 'Radio / PTT',
+      position: { x: 27, y: 36 },
+      size: { width: 6, height: 6 },
       rotation: 0,
-      style: { shape: 'rect', fill: '#a3e635', stroke: '#3f6212', opacity: 0.55 },
-      defaultBinding: '',
+      style: PINK,
+      defaultBinding: 'Push-to-Talk',
     },
     {
-      id: 'ctrl-button-3',
+      id: 'ctrl-wiper',
       type: 'button',
-      label: 'Button 3',
-      position: { x: 54, y: 24 },
-      size: { width: 5, height: 6 },
+      label: 'Wiper',
+      position: { x: 67, y: 36 },
+      size: { width: 6, height: 6 },
       rotation: 0,
-      style: { shape: 'rect', fill: '#a3e635', stroke: '#3f6212', opacity: 0.55 },
-      defaultBinding: '',
+      style: PINK,
+      defaultBinding: 'Wiper Toggle',
     },
     {
-      id: 'ctrl-button-4',
-      type: 'button',
-      label: 'Button 4',
-      position: { x: 62, y: 24 },
-      size: { width: 5, height: 6 },
+      id: 'ctrl-multi',
+      type: 'funky-switch',
+      label: 'MULTI',
+      position: { x: 25, y: 46 },
+      size: { width: 5, height: 5 },
       rotation: 0,
-      style: { shape: 'rect', fill: '#a3e635', stroke: '#3f6212', opacity: 0.55 },
-      defaultBinding: '',
+      style: FUNKY,
+      notes: '7-way directional switch (N/NE/E/SE/S/SW/W + center push) for quick multi-function access.',
+      defaultBinding: 'Multi-function Adjustment',
     },
     {
-      id: 'ctrl-toggle-1',
-      type: 'toggle-switch',
-      label: 'Toggle Switch',
-      position: { x: 46, y: 60 },
-      size: { width: 4, height: 10 },
+      id: 'ctrl-menu',
+      type: 'funky-switch',
+      label: 'MENU',
+      position: { x: 70, y: 46 },
+      size: { width: 5, height: 5 },
       rotation: 0,
-      style: { shape: 'rect', fill: '#e879f9', stroke: '#86198f', opacity: 0.55 },
-      defaultBinding: 'Ignition',
-    },
-    {
-      id: 'ctrl-joystick-1',
-      type: 'joystick',
-      label: 'D-Pad Hat',
-      position: { x: 60, y: 58 },
-      size: { width: 9, height: 9 },
-      rotation: 0,
-      style: { shape: 'circle', fill: '#60a5fa', stroke: '#1d4ed8', opacity: 0.55 },
+      style: FUNKY,
+      notes: '7-way directional switch (N/NE/E/SE/S/SW/W + center push) for dash menu navigation.',
       defaultBinding: 'Menu Navigation',
+    },
+    {
+      id: 'ctrl-ok',
+      type: 'button',
+      label: 'OK',
+      position: { x: 26, y: 56 },
+      size: { width: 6, height: 6 },
+      rotation: 0,
+      style: RED,
+      defaultBinding: 'Confirm',
+    },
+    {
+      id: 'ctrl-right-function',
+      type: 'button',
+      label: 'Right Function Button',
+      position: { x: 68, y: 56 },
+      size: { width: 6, height: 6 },
+      rotation: 0,
+      style: TEAL,
+      defaultBinding: '',
+    },
+    {
+      id: 'ctrl-left-thumbstick',
+      type: 'joystick',
+      label: 'Left Thumbstick',
+      position: { x: 28, y: 71 },
+      size: { width: 6, height: 6 },
+      rotation: 0,
+      style: { shape: 'circle', fill: '#c084fc', stroke: '#6b21a8', opacity: 0.55 },
+      defaultBinding: '',
+    },
+    {
+      id: 'ctrl-right-thumbstick',
+      type: 'joystick',
+      label: 'Right Thumbstick',
+      position: { x: 66, y: 71 },
+      size: { width: 6, height: 6 },
+      rotation: 0,
+      style: TEAL,
+      defaultBinding: '',
+    },
+    {
+      id: 'ctrl-map',
+      type: 'rotary-encoder',
+      label: 'MAP',
+      position: { x: 35, y: 66 },
+      size: { width: 5, height: 5 },
+      rotation: 0,
+      style: PURPLE_KNOB,
+      defaultBinding: 'Engine Map Select',
+    },
+    {
+      id: 'ctrl-delta-left',
+      type: 'rotary-encoder',
+      label: 'DELTA (left)',
+      position: { x: 42, y: 62 },
+      size: { width: 5, height: 5 },
+      rotation: 0,
+      style: PURPLE_KNOB,
+      defaultBinding: '',
+    },
+    {
+      id: 'ctrl-delta-right',
+      type: 'rotary-encoder',
+      label: 'DELTA (right)',
+      position: { x: 53, y: 62 },
+      size: { width: 5, height: 5 },
+      rotation: 0,
+      style: PURPLE_KNOB,
+      defaultBinding: '',
+    },
+    {
+      id: 'ctrl-mode',
+      type: 'rotary-encoder',
+      label: 'MODE',
+      position: { x: 60, y: 66 },
+      size: { width: 5, height: 5 },
+      rotation: 0,
+      style: PURPLE_KNOB,
+      defaultBinding: 'Dash Mode',
     },
   ],
 }
