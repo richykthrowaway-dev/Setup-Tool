@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { storage } from '../services/storage'
-import { createControlObject, createHardwareTemplate } from '../lib/factories'
+import { createControlObject, createHardwareTemplate, createTemplateFromPresetControls } from '../lib/factories'
 import type { ControlObject, ControlType, HardwareTemplate } from '../types/models'
 
 interface TemplateState {
@@ -16,6 +16,10 @@ interface TemplateState {
     imageWidth: number
     imageHeight: number
   }) => void
+  startTemplateFromPreset: (
+    preset: HardwareTemplate,
+    image: { imageUrl: string; imageWidth: number; imageHeight: number },
+  ) => void
   loadTemplate: (template: HardwareTemplate) => void
   clearTemplate: () => void
 
@@ -37,6 +41,11 @@ export const useTemplateStore = create<TemplateState>((set, get) => ({
 
   startNewTemplate: (params) => {
     const template = createHardwareTemplate(params)
+    set({ template, selectedControlId: null })
+  },
+
+  startTemplateFromPreset: (preset, image) => {
+    const template = createTemplateFromPresetControls(preset, image)
     set({ template, selectedControlId: null })
   },
 

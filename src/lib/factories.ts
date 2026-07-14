@@ -89,6 +89,32 @@ export function forkHardwareTemplate(source: HardwareTemplate): HardwareTemplate
   }
 }
 
+/**
+ * Starts a new template using a preset's control layout (metadata + all
+ * ControlObjects, e.g. the built-in Conspit MAX 01 mapping) but the caller's
+ * own uploaded image. Positions are already normalized percentages, so they
+ * carry over onto any image — closest fidelity when the new photo has a
+ * similar aspect ratio/framing to the one the preset was mapped from.
+ */
+export function createTemplateFromPresetControls(
+  preset: HardwareTemplate,
+  image: { imageUrl: string; imageWidth: number; imageHeight: number },
+): HardwareTemplate {
+  const now = new Date().toISOString()
+  return {
+    id: generateId(),
+    meta: { ...preset.meta },
+    imageUrl: image.imageUrl,
+    imageWidth: image.imageWidth,
+    imageHeight: image.imageHeight,
+    controls: preset.controls.map((control) => ({ ...control, id: generateId() })),
+    version: 1,
+    isPublic: false,
+    createdAt: now,
+    updatedAt: now,
+  }
+}
+
 export function createUserProfile(params: {
   hardwareTemplateId: string
   name: string

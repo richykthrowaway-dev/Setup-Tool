@@ -18,6 +18,7 @@ export function CreatorView() {
   const template = useTemplateStore((s) => s.template)
   const selectedControlId = useTemplateStore((s) => s.selectedControlId)
   const startNewTemplate = useTemplateStore((s) => s.startNewTemplate)
+  const startTemplateFromPreset = useTemplateStore((s) => s.startTemplateFromPreset)
   const updateMeta = useTemplateStore((s) => s.updateMeta)
   const setIsPublic = useTemplateStore((s) => s.setIsPublic)
   const addControl = useTemplateStore((s) => s.addControl)
@@ -66,33 +67,52 @@ export function CreatorView() {
 
   if (!template) {
     return (
-      <div className="mx-auto flex max-w-md flex-col items-center gap-4 py-16 text-center">
-        <h2 className="text-lg font-semibold text-slate-100">Start a hardware template</h2>
-        <p className="text-sm text-slate-400">
-          Upload a photo of any sim racing device — wheel, button box, shifter, pedals, dash — and turn it into an
-          interactive, reusable template.
-        </p>
-        <ImageUploader
-          label="Upload image to start"
-          onImageLoaded={({ imageUrl, width, height }) =>
-            startNewTemplate({ manufacturer: '', model: 'Untitled Device', imageUrl, imageWidth: width, imageHeight: height })
-          }
-        />
-        <div className="text-xs text-slate-500">or</div>
-        <button
-          type="button"
-          onClick={() => importInputRef.current?.click()}
-          className="rounded-md border border-slate-600 px-4 py-2 text-sm text-slate-200 hover:border-slate-400"
-        >
-          Import a template JSON file
-        </button>
-        <button
-          type="button"
-          onClick={() => loadTemplate(CONSPIT_MAX_01_TEMPLATE)}
-          className="text-xs text-slate-500 underline hover:text-slate-300"
-        >
-          Or load the Conspit MAX 01 example
-        </button>
+      <div className="mx-auto flex max-w-lg flex-col items-center gap-6 py-16 text-center">
+        <div className="flex flex-col items-center gap-4">
+          <h2 className="text-lg font-semibold text-slate-100">Start a hardware template</h2>
+          <p className="text-sm text-slate-400">
+            Upload a photo of any sim racing device — wheel, button box, shifter, pedals, dash — and turn it into an
+            interactive, reusable template.
+          </p>
+          <ImageUploader
+            label="Upload image to start"
+            onImageLoaded={({ imageUrl, width, height }) =>
+              startNewTemplate({ manufacturer: '', model: 'Untitled Device', imageUrl, imageWidth: width, imageHeight: height })
+            }
+          />
+        </div>
+
+        <div className="w-full rounded-lg border border-slate-700 bg-slate-900 p-4">
+          <h3 className="text-sm font-semibold text-slate-100">Have a Conspit MAX 01?</h3>
+          <p className="mt-1 text-xs text-slate-400">
+            Upload your own photo of it and we'll apply the 20-control layout already mapped for that device —
+            just adjust positions to match your exact photo.
+          </p>
+          <ImageUploader
+            label="Upload your MAX 01 photo"
+            className="mt-3"
+            onImageLoaded={({ imageUrl, width, height }) =>
+              startTemplateFromPreset(CONSPIT_MAX_01_TEMPLATE, { imageUrl, imageWidth: width, imageHeight: height })
+            }
+          />
+        </div>
+
+        <div className="flex flex-col items-center gap-2">
+          <button
+            type="button"
+            onClick={() => importInputRef.current?.click()}
+            className="rounded-md border border-slate-600 px-4 py-2 text-sm text-slate-200 hover:border-slate-400"
+          >
+            Import a template JSON file
+          </button>
+          <button
+            type="button"
+            onClick={() => loadTemplate(CONSPIT_MAX_01_TEMPLATE)}
+            className="text-xs text-slate-500 underline hover:text-slate-300"
+          >
+            Or preview the MAX 01 example on a placeholder image
+          </button>
+        </div>
         <input ref={importInputRef} type="file" accept="application/json" className="hidden" onChange={handleImportFile} />
         {importError && <p className="text-sm text-red-400">{importError}</p>}
       </div>
