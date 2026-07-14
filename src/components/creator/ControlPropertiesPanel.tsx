@@ -77,14 +77,6 @@ export function ControlPropertiesPanel({ control, onChange, onDelete }: ControlP
             onChange={(e) => onChange(control.id, { size: { ...control.size, height: Number(e.target.value) } })}
           />
         </Field>
-        <Field label="Rotation °">
-          <input
-            type="number"
-            className="input"
-            value={round(control.rotation)}
-            onChange={(e) => onChange(control.id, { rotation: Number(e.target.value) })}
-          />
-        </Field>
         <Field label="Shape">
           <select
             className="input"
@@ -101,6 +93,18 @@ export function ControlPropertiesPanel({ control, onChange, onDelete }: ControlP
           </select>
         </Field>
       </div>
+
+      <Field label={`Shape rotation (${round(control.rotation)}°)`}>
+        <input
+          type="range"
+          min={-180}
+          max={180}
+          step={1}
+          className="w-full accent-cyan-500"
+          value={control.rotation}
+          onChange={(e) => onChange(control.id, { rotation: Number(e.target.value) })}
+        />
+      </Field>
 
       <Field label={`Label rotation (${round(control.labelRotation ?? 0)}°)`}>
         <input
