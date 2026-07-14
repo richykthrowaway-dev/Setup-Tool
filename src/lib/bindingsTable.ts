@@ -24,6 +24,14 @@ export function filterBindingRows(rows: BindingRow[], query: string): BindingRow
   })
 }
 
+export const BINDING_STATUS_FILTERS = ['all', 'unbound', 'bound'] as const
+export type BindingStatusFilter = (typeof BINDING_STATUS_FILTERS)[number]
+
+export function filterByBindingStatus(rows: BindingRow[], status: BindingStatusFilter): BindingRow[] {
+  if (status === 'all') return rows
+  return rows.filter((row) => (status === 'unbound' ? !row.binding : Boolean(row.binding)))
+}
+
 export const BINDING_SORT_KEYS = ['label', 'type', 'function', 'category', 'unbound'] as const
 export type BindingSortKey = (typeof BINDING_SORT_KEYS)[number]
 export type SortDirection = 'asc' | 'desc'

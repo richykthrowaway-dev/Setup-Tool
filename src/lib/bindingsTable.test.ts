@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { buildBindingRows, filterBindingRows, sortBindingRows } from './bindingsTable'
+import { buildBindingRows, filterBindingRows, filterByBindingStatus, sortBindingRows } from './bindingsTable'
 import { createBinding, createControlObject } from './factories'
 
 function rows() {
@@ -47,6 +47,22 @@ describe('filterBindingRows', () => {
 
   it('returns nothing for a query that matches no row', () => {
     expect(filterBindingRows(rows(), 'nonexistent-xyz')).toHaveLength(0)
+  })
+})
+
+describe('filterByBindingStatus', () => {
+  it('returns everything for "all"', () => {
+    expect(filterByBindingStatus(rows(), 'all')).toHaveLength(3)
+  })
+
+  it('returns only unbound rows for "unbound"', () => {
+    const result = filterByBindingStatus(rows(), 'unbound')
+    expect(result.map((r) => r.control.label)).toEqual(['OK'])
+  })
+
+  it('returns only bound rows for "bound"', () => {
+    const result = filterByBindingStatus(rows(), 'bound')
+    expect(result.map((r) => r.control.label).sort()).toEqual(['DRS', 'N'])
   })
 })
 
