@@ -22,6 +22,16 @@ interface UiPreferencesState {
    */
   labelDisplayMode: LabelDisplayMode
   setLabelDisplayMode: (mode: LabelDisplayMode) => void
+
+  /**
+   * Controls what is displayed on the canvas (numbered circles in table view).
+   * Persisted across reloads.
+   * - 'numbers': show sequential control number (e.g., "1", "2", "3")
+   * - 'names': show control.label (e.g., "Rotary 1 (top left)")
+   * - 'functions': show binding.assignedFunction (e.g., "Shift Up")
+   */
+  canvasLabelDisplayMode: LabelDisplayMode
+  setCanvasLabelDisplayMode: (mode: LabelDisplayMode) => void
 }
 
 export const useUiPreferencesStore = create<UiPreferencesState>()(
@@ -31,6 +41,8 @@ export const useUiPreferencesStore = create<UiPreferencesState>()(
       setConfiguratorViewMode: (mode) => set({ configuratorViewMode: mode }),
       labelDisplayMode: 'names',
       setLabelDisplayMode: (mode) => set({ labelDisplayMode: mode }),
+      canvasLabelDisplayMode: 'numbers',
+      setCanvasLabelDisplayMode: (mode) => set({ canvasLabelDisplayMode: mode }),
     }),
     { name: 'supermapper:ui-preferences' },
   ),

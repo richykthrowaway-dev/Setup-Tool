@@ -23,6 +23,7 @@ interface HardwareCanvasProps {
   showNumbersOnly?: boolean
   hoveredControlId?: string | null
   getBindingForControl?: (controlId: string) => { assignedFunction: string } | undefined
+  canvasLabelDisplayMode?: 'numbers' | 'names' | 'functions'
 }
 
 export function HardwareCanvas({
@@ -39,6 +40,7 @@ export function HardwareCanvas({
   showNumbersOnly,
   hoveredControlId,
   getBindingForControl,
+  canvasLabelDisplayMode,
 }: HardwareCanvasProps) {
   const { ref, width } = useContainerWidth<HTMLDivElement>()
   const [image] = useImage(imageUrl)
@@ -99,6 +101,7 @@ export function HardwareCanvas({
                   isBound={!!binding}
                   assignedFunction={binding?.assignedFunction}
                   isHovered={control.id === hoveredControlId}
+                  canvasLabelDisplayMode={canvasLabelDisplayMode}
                 />
               )
             })}

@@ -24,6 +24,7 @@ interface ControlShapeProps {
   isBound?: boolean
   assignedFunction?: string
   isHovered?: boolean
+  canvasLabelDisplayMode?: 'numbers' | 'names' | 'functions'
 }
 
 export function ControlShape({
@@ -40,6 +41,7 @@ export function ControlShape({
   isBound,
   assignedFunction,
   isHovered,
+  canvasLabelDisplayMode = 'numbers',
 }: ControlShapeProps) {
   const groupRef = useRef<Konva.Group>(null)
   const transformerRef = useRef<Konva.Transformer>(null)
@@ -119,6 +121,28 @@ export function ControlShape({
     const baseColor = isBound ? '#06b6d4' : '#f97316' // cyan if bound, orange if unbound
     const isHoveredOrSelected = isHovered || isSelected
 
+    let displayText = ''
+    let displayFontSize = 16
+    let displayX = -12
+    let displayY = -10
+    let displayWidth = 24
+
+    if (canvasLabelDisplayMode === 'numbers') {
+      displayText = controlNumber.toString()
+    } else if (canvasLabelDisplayMode === 'names') {
+      displayText = control.label
+      displayFontSize = 10
+      displayX = -circleRadius
+      displayY = -circleRadius
+      displayWidth = circleRadius * 2
+    } else if (canvasLabelDisplayMode === 'functions') {
+      displayText = isBound && assignedFunction ? assignedFunction : ''
+      displayFontSize = 10
+      displayX = -circleRadius
+      displayY = -circleRadius
+      displayWidth = circleRadius * 2
+    }
+
     return (
       <Group
         x={centerX}
@@ -137,15 +161,17 @@ export function ControlShape({
           opacity={0.9}
         />
         <Text
-          text={controlNumber.toString()}
-          fontSize={16}
+          text={displayText}
+          fontSize={displayFontSize}
           fontStyle="700"
           fill="#fff"
-          x={-12}
-          y={-10}
-          width={24}
+          x={displayX}
+          y={displayY}
+          width={displayWidth}
           align="center"
           verticalAlign="middle"
+          ellipsis
+          wrap="none"
         />
         {isBound && (
           <Text
