@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useLibraryStore } from '../../store/libraryStore'
 import { useProfileStore } from '../../store/profileStore'
-import { useUiPreferencesStore } from '../../store/uiPreferencesStore'
+import { useUiPreferencesStore, type LabelDisplayMode } from '../../store/uiPreferencesStore'
 import { GAME_FUNCTION_DATALIST_ID, getGameFunctionSuggestions } from '../../data/gameFunctions'
 import { HardwareCanvas } from '../canvas/HardwareCanvas'
 import { BindingPanel } from './BindingPanel'
@@ -42,6 +42,8 @@ export function ConfiguratorView({ initialTemplateId, initialProfileId, initialV
 
   const viewMode = useUiPreferencesStore((s) => s.configuratorViewMode)
   const setViewMode = useUiPreferencesStore((s) => s.setConfiguratorViewMode)
+  const canvasLabelDisplayMode = useUiPreferencesStore((s) => s.canvasLabelDisplayMode)
+  const setCanvasLabelDisplayMode = useUiPreferencesStore((s) => s.setCanvasLabelDisplayMode)
 
   const [selectedTemplateId, setSelectedTemplateId] = useState(initialTemplateId ?? '')
   const [selectedControlId, setSelectedControlId] = useState<string | null>(null)
@@ -76,6 +78,19 @@ export function ConfiguratorView({ initialTemplateId, initialProfileId, initialV
   const selectedControl = template?.controls.find((c) => c.id === selectedControlId) ?? null
   const selectedBinding = profile?.bindings.find((b) => b.controlId === selectedControlId)
   const gameFunctionSuggestions = useMemo(() => getGameFunctionSuggestions(profile?.game), [profile?.game])
+
+  const displayModeOrder: LabelDisplayMode[] = ['numbers', 'names', 'functions']
+  const displayModeLabels: Record<LabelDisplayMode, string> = {
+    numbers: 'Numbers',
+    names: 'Names',
+    functions: 'Functions',
+  }
+
+  function cycleCanvasLabelDisplayMode() {
+    const currentIndex = displayModeOrder.indexOf(canvasLabelDisplayMode)
+    const nextIndex = (currentIndex + 1) % displayModeOrder.length
+    setCanvasLabelDisplayMode(displayModeOrder[nextIndex])
+  }
 
   async function handleSaveProfile() {
     await saveProfile()
@@ -222,11 +237,24 @@ export function ConfiguratorView({ initialTemplateId, initialProfileId, initialV
                   editable={false}
                   onSelectControl={setSelectedControlId}
                   isControlDimmed={(c) => !profile.bindings.some((b) => b.controlId === c.id)}
+                  showNumbersOnly={true}
+                  canvasLabelDisplayMode={canvasLabelDisplayMode}
                 />
               </div>
             ) : (
-              <div className="grid grid-cols-1 gap-4 lg:grid-cols-[340px_1fr]">
+              <div className="flex flex-col gap-4 lg:grid lg:grid-cols-[340px_1fr]">
                 <div className="overflow-hidden rounded-lg border border-slate-700 bg-slate-900">
+                  <div className="flex items-center justify-between border-b border-slate-700 bg-slate-800 px-3 py-2">
+                    <span className="text-xs font-medium text-slate-300">Canvas Labels</span>
+                    <button
+                      type="button"
+                      onClick={cycleCanvasLabelDisplayMode}
+                      className="rounded-md border border-slate-600 px-2 py-1 text-xs text-slate-200 hover:border-slate-400"
+                      title="Cycle through: Button numbers, Control names, Assigned functions"
+                    >
+                      {displayModeLabels[canvasLabelDisplayMode]}
+                    </button>
+                  </div>
                   <HardwareCanvas
                     imageUrl={template.imageUrl}
                     imageWidth={template.imageWidth}
@@ -239,6 +267,7 @@ export function ConfiguratorView({ initialTemplateId, initialProfileId, initialV
                     showNumbersOnly={true}
                     hoveredControlId={hoveredControlId}
                     getBindingForControl={(controlId) => profile.bindings.find((b) => b.controlId === controlId)}
+                    canvasLabelDisplayMode={canvasLabelDisplayMode}
                   />
                 </div>
                 <BindingsTable
