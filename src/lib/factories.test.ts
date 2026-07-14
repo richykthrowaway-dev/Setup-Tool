@@ -36,6 +36,7 @@ describe('createHardwareTemplate', () => {
     expect(template.isPublic).toBe(false)
     expect(template.controls).toEqual([])
     expect(template.id).toBeTruthy()
+    expect(template.notes).toBe('')
   })
 })
 

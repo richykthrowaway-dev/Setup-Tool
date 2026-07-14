@@ -81,6 +81,8 @@ export interface HardwareTemplate {
   creatorId?: string
   /** Visible to other users in the community gallery. Ignored in local demo mode. */
   isPublic?: boolean
+  /** Free-form notes about the template as a whole (not tied to any one control). */
+  notes?: string
   createdAt: string
   updatedAt: string
 }

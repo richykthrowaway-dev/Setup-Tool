@@ -6,6 +6,7 @@ import { HardwareCanvas } from '../canvas/HardwareCanvas'
 import { ImageUploader } from '../shared/ImageUploader'
 import { ControlToolbar } from './ControlToolbar'
 import { ControlPropertiesPanel } from './ControlPropertiesPanel'
+import { Field } from '../shared/Field'
 import { exportHardwareTemplate, importHardwareTemplate, ImportValidationError } from '../../services/io/exportImport'
 import { CONSPIT_MAX_01_TEMPLATE } from '../../data/templates/conspitMax01'
 import { isSupabaseConfigured } from '../../lib/config'
@@ -21,6 +22,7 @@ export function CreatorView() {
   const startTemplateFromPreset = useTemplateStore((s) => s.startTemplateFromPreset)
   const updateMeta = useTemplateStore((s) => s.updateMeta)
   const setIsPublic = useTemplateStore((s) => s.setIsPublic)
+  const setNotes = useTemplateStore((s) => s.setNotes)
   const addControl = useTemplateStore((s) => s.addControl)
   const updateControl = useTemplateStore((s) => s.updateControl)
   const removeControl = useTemplateStore((s) => s.removeControl)
@@ -153,6 +155,16 @@ export function CreatorView() {
             Make this template public (visible to other users in the community gallery)
           </label>
         )}
+
+        <Field label="Notes (template-level, included in export/import)">
+          <textarea
+            className="input"
+            rows={3}
+            placeholder="e.g. photo taken under warm lighting, colors may look off; still need to verify pedal calibration…"
+            value={template.notes ?? ''}
+            onChange={(e) => setNotes(e.target.value)}
+          />
+        </Field>
 
         <ControlToolbar pendingType={pendingType} onSelectType={setPendingType} />
 

@@ -48,6 +48,7 @@ export const hardwareTemplateSchema = z.object({
   version: z.number().int().positive(),
   creatorId: z.string().optional(),
   isPublic: z.boolean().optional(),
+  notes: z.string().optional(),
   createdAt: z.string(),
   updatedAt: z.string(),
 })

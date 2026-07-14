@@ -70,6 +70,7 @@ export function createHardwareTemplate(params: {
     controls: [],
     version: 1,
     isPublic: false,
+    notes: '',
     createdAt: now,
     updatedAt: now,
   }
@@ -111,6 +112,7 @@ export function createTemplateFromPresetControls(
     controls: preset.controls.map((control) => ({ ...control, id: generateId() })),
     version: 1,
     isPublic: false,
+    notes: '',
     createdAt: now,
     updatedAt: now,
   }

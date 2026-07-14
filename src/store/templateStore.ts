@@ -25,6 +25,7 @@ interface TemplateState {
 
   updateMeta: (partial: Partial<HardwareTemplate['meta']>) => void
   setIsPublic: (isPublic: boolean) => void
+  setNotes: (notes: string) => void
 
   addControl: (type: ControlType, position: { x: number; y: number }) => string
   updateControl: (id: string, partial: Partial<Omit<ControlObject, 'id'>>) => void
@@ -69,6 +70,12 @@ export const useTemplateStore = create<TemplateState>((set, get) => ({
     const { template } = get()
     if (!template) return
     set({ template: { ...template, isPublic, updatedAt: new Date().toISOString() } })
+  },
+
+  setNotes: (notes) => {
+    const { template } = get()
+    if (!template) return
+    set({ template: { ...template, notes, updatedAt: new Date().toISOString() } })
   },
 
   addControl: (type, position) => {

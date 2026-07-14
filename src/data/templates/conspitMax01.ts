@@ -24,16 +24,16 @@ export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
   updatedAt: '2026-01-01T00:00:00.000Z',
   controls: [
     {
-      id: 'fc2fbe88-f5ec-4380-9687-dba3d90ff875',
+      id: '775e818d-a3a3-40aa-b418-7c4975422d92',
       type: 'rotary-encoder',
       label: 'DRS',
       position: {
-        x: 16.26,
-        y: 16.23
+        x: 17.29,
+        y: 17.2
       },
       size: {
-        width: 5,
-        height: 5
+        width: 4,
+        height: 4
       },
       rotation: 0,
       labelRotation: 0,
@@ -47,16 +47,16 @@ export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
       defaultBinding: 'DRS Activation'
     },
     {
-      id: 'd0a0b266-c97d-4932-84d6-893775b5e5d9',
+      id: '657ea92c-ea0c-4a0d-a541-f73ee4f3c995',
       type: 'rotary-encoder',
       label: 'P',
       position: {
-        x: 78.9,
-        y: 17.19
+        x: 79.42,
+        y: 17.77
       },
       size: {
-        width: 5,
-        height: 5
+        width: 4,
+        height: 4
       },
       rotation: 0,
       labelRotation: 0,
@@ -70,16 +70,16 @@ export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
       defaultBinding: 'Pit Limiter'
     },
     {
-      id: '6822825b-afcd-489c-90b9-1302b8205248',
+      id: '6620bcd1-d080-4cce-a6ad-5655f710c7c6',
       type: 'button',
       label: 'N',
       position: {
-        x: 24.13,
-        y: 20.26
+        x: 24.78,
+        y: 21.03
       },
       size: {
-        width: 5,
-        height: 5
+        width: 4,
+        height: 4
       },
       rotation: 0,
       labelRotation: 0,
@@ -92,16 +92,16 @@ export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
       defaultBinding: 'Neutral'
     },
     {
-      id: 'ca773be7-8b07-4dda-9eab-41ce59d15648',
+      id: '6a71a61c-2fde-4201-85be-a9cbc20b94d0',
       type: 'button',
       label: 'FCY',
       position: {
-        x: 71.55,
-        y: 20.84
+        x: 72.2,
+        y: 21.61
       },
       size: {
-        width: 5,
-        height: 5
+        width: 4,
+        height: 4
       },
       rotation: 0,
       labelRotation: 0,
@@ -114,7 +114,7 @@ export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
       defaultBinding: 'Full Course Yellow Flag'
     },
     {
-      id: 'c60e54f8-896f-4737-a588-b90296ee0ef1',
+      id: '1ddce6b8-4702-4cb0-9a54-a388faee8078',
       type: 'paddle',
       label: 'Left Rotary Paddle',
       position: {
@@ -125,7 +125,7 @@ export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
         width: 3,
         height: 10
       },
-      rotation: 0,
+      rotation: -80,
       labelRotation: 0,
       style: {
         shape: 'ellipse',
@@ -137,18 +137,18 @@ export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
       defaultBinding: ''
     },
     {
-      id: 'ea4b139b-2723-42ec-ab27-7ab0aa48b9b2',
+      id: 'bef8657d-a2a7-4cb2-9147-24f36283d34a',
       type: 'rotary-encoder',
       label: 'Right Rotary Paddle',
       position: {
-        x: 88.32,
-        y: 22.87
+        x: 87.8,
+        y: 22.29
       },
       size: {
         width: 3,
         height: 10
       },
-      rotation: -1,
+      rotation: 80,
       labelRotation: 0,
       style: {
         shape: 'ellipse',
@@ -160,16 +160,16 @@ export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
       defaultBinding: ''
     },
     {
-      id: '0d7eed39-312d-4520-8ad8-0fa284fadccf',
+      id: '5530dcd8-6095-4168-bb1f-974e63876ef0',
       type: 'button',
       label: 'Radio / PTT',
       position: {
-        x: 27,
-        y: 37.93
+        x: 28.16,
+        y: 37.16
       },
       size: {
-        width: 5,
-        height: 5
+        width: 4,
+        height: 4
       },
       rotation: 0,
       labelRotation: 0,
@@ -182,16 +182,16 @@ export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
       defaultBinding: 'Push-to-Talk'
     },
     {
-      id: '2856bd70-f247-439a-b535-904b31c416bf',
+      id: 'bd0f46c6-db6a-475b-9e09-bfc37facd749',
       type: 'button',
       label: 'Wiper',
       position: {
-        x: 68.42,
-        y: 38.71
+        x: 68.81,
+        y: 38.13
       },
       size: {
-        width: 5,
-        height: 5
+        width: 4,
+        height: 4
       },
       rotation: 0,
       labelRotation: 0,
@@ -204,22 +204,22 @@ export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
       defaultBinding: 'Wiper Toggle'
     },
     {
-      id: '4cd86e32-66b9-4a99-8fcf-6b6fa144923c',
+      id: 'e5ae5e13-5e91-4b15-8a4a-52c3610c0d05',
       type: 'funky-switch',
       label: 'MULTI',
       position: {
-        x: 25.13,
-        y: 47.16
+        x: 25.78,
+        y: 47.55
       },
       size: {
-        width: 4,
-        height: 4
+        width: 3,
+        height: 3
       },
       rotation: 0,
       labelRotation: 0,
       style: {
-        shape: 'rect',
-        fill: '#fbbf24',
+        shape: 'diamond',
+        fill: '#fff705',
         stroke: '#92400e',
         opacity: 0.22
       },
@@ -227,22 +227,22 @@ export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
       defaultBinding: 'Multi-function Adjustment'
     },
     {
-      id: '514cc422-a061-421b-8c8b-76fa975ac435',
+      id: '59ef72c2-418b-463d-bba6-2a1611f9d912',
       type: 'funky-switch',
       label: 'MENU',
       position: {
-        x: 72.19,
-        y: 48.13
+        x: 71.54,
+        y: 47.36
       },
       size: {
-        width: 4,
-        height: 4
+        width: 3,
+        height: 3
       },
       rotation: 0,
       labelRotation: 0,
       style: {
-        shape: 'rect',
-        fill: '#fbbf24',
+        shape: 'diamond',
+        fill: '#fff705',
         stroke: '#92400e',
         opacity: 0.22
       },
@@ -250,12 +250,12 @@ export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
       defaultBinding: 'Menu Navigation'
     },
     {
-      id: 'a9785aa6-1b40-4656-82fa-543bd797d7bc',
+      id: '1b3c86a3-b9c7-45cd-b3a1-7af9bb51a116',
       type: 'button',
       label: 'OK',
       position: {
-        x: 26.39,
-        y: 56.58
+        x: 27.16,
+        y: 55.81
       },
       size: {
         width: 5,
@@ -272,16 +272,16 @@ export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
       defaultBinding: 'Confirm'
     },
     {
-      id: 'b0e85b62-3fbf-49b7-ac4f-1dcffebe6426',
+      id: '2a83be73-df63-4b58-91d0-1e3e47a8f5cb',
       type: 'button',
-      label: 'Right Function Button',
+      label: 'Right Button',
       position: {
-        x: 68.26,
+        x: 69.42,
         y: 56.39
       },
       size: {
-        width: 5,
-        height: 5
+        width: 4,
+        height: 4
       },
       rotation: 0,
       labelRotation: 0,
@@ -294,7 +294,7 @@ export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
       defaultBinding: ''
     },
     {
-      id: 'cd39c8c2-33f5-4038-a6a0-6484013d7f71',
+      id: '52356cf8-3288-4278-b809-86125032abd0',
       type: 'joystick',
       label: 'Left Thumbstick',
       position: {
@@ -309,23 +309,23 @@ export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
       labelRotation: 0,
       style: {
         shape: 'circle',
-        fill: '#c084fc',
+        fill: '#2ecc6b',
         stroke: '#6b21a8',
         opacity: 0.22
       },
       defaultBinding: ''
     },
     {
-      id: '633d0e61-218e-4085-8001-9d36ef68cc89',
+      id: 'd6da7377-926f-4bad-a041-b9baaf84aae7',
       type: 'joystick',
       label: 'Right Thumbstick',
       position: {
-        x: 67.16,
-        y: 70.23
+        x: 67.68,
+        y: 71
       },
       size: {
-        width: 5,
-        height: 5
+        width: 4,
+        height: 4
       },
       rotation: 0,
       labelRotation: 0,
@@ -338,16 +338,16 @@ export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
       defaultBinding: ''
     },
     {
-      id: 'b6594d64-1d2e-4c70-b41c-3aa891ff529d',
+      id: '58b3af1c-910d-4477-a0a0-8b4f0452105f',
       type: 'rotary-encoder',
       label: 'MAP',
       position: {
-        x: 34.23,
-        y: 61.55
+        x: 34.62,
+        y: 62.32
       },
       size: {
-        width: 5,
-        height: 5
+        width: 4,
+        height: 4
       },
       rotation: 0,
       labelRotation: 0,
@@ -360,7 +360,7 @@ export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
       defaultBinding: 'Engine Map Select'
     },
     {
-      id: 'f4c52b77-9291-40ba-a084-c98c2cfc69e5',
+      id: '4793409a-9250-4674-b687-efa7917564a7',
       type: 'rotary-encoder',
       label: 'DELTA (left)',
       position: {
@@ -382,7 +382,7 @@ export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
       defaultBinding: ''
     },
     {
-      id: 'c20f7a92-b372-46b3-a34a-5c1aa1b1cb92',
+      id: 'e552d635-31d1-4c42-a395-528b917502d3',
       type: 'rotary-encoder',
       label: 'DELTA (right)',
       position: {
@@ -404,16 +404,16 @@ export const CONSPIT_MAX_01_TEMPLATE: HardwareTemplate = {
       defaultBinding: ''
     },
     {
-      id: 'e9f0d519-274d-4c07-95e6-c4c66f463cbf',
+      id: 'a9acd265-50f1-4b20-965d-f6d13174357e',
       type: 'rotary-encoder',
       label: 'MODE',
       position: {
-        x: 61.03,
-        y: 62.32
+        x: 61.68,
+        y: 62.51
       },
       size: {
-        width: 5,
-        height: 5
+        width: 4,
+        height: 4
       },
       rotation: 0,
       labelRotation: 0,

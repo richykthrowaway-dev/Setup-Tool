@@ -40,6 +40,19 @@ describe('hardwareTemplateSchema', () => {
     const result = hardwareTemplateSchema.safeParse(withoutMeta)
     expect(result.success).toBe(false)
   })
+
+  it('accepts an optional template-level notes string', () => {
+    const template = { ...validTemplate(), notes: 'Photo taken under warm lighting; colors may look off.' }
+    const result = hardwareTemplateSchema.safeParse(template)
+    expect(result.success).toBe(true)
+  })
+
+  it('accepts a template with no notes field at all', () => {
+    const { notes: _notes, ...withoutNotes } = validTemplate()
+    expect('notes' in withoutNotes).toBe(false)
+    const result = hardwareTemplateSchema.safeParse(withoutNotes)
+    expect(result.success).toBe(true)
+  })
 })
 
 describe('userProfileSchema', () => {
