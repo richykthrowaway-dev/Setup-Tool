@@ -1,6 +1,7 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { isSupabaseConfigured } from '../lib/config'
+import { templateMatchesQuery } from '../lib/search'
 import { useAuthStore } from '../store/authStore'
 import { useLibraryStore } from '../store/libraryStore'
 import type { HardwareTemplate, UserProfile } from '../types/models'
@@ -18,15 +19,19 @@ export function DashboardPage() {
   const forkTemplate = useLibraryStore((s) => s.forkTemplate)
   const user = useAuthStore((s) => s.user)
 
+  const [search, setSearch] = useState('')
+
   useEffect(() => {
     refreshTemplates()
     refreshProfiles()
   }, [refreshTemplates, refreshProfiles])
 
-  const myTemplates = isSupabaseConfigured ? templates.filter((t) => t.creatorId === user?.id) : templates
-  const publicTemplates = isSupabaseConfigured
-    ? templates.filter((t) => t.isPublic && t.creatorId !== user?.id)
-    : []
+  const myTemplates = (isSupabaseConfigured ? templates.filter((t) => t.creatorId === user?.id) : templates).filter(
+    (t) => templateMatchesQuery(t, search),
+  )
+  const publicTemplates = (
+    isSupabaseConfigured ? templates.filter((t) => t.isPublic && t.creatorId !== user?.id) : []
+  ).filter((t) => templateMatchesQuery(t, search))
 
   return (
     <div className="flex flex-col gap-10">
@@ -40,6 +45,16 @@ export function DashboardPage() {
         </Link>
       </div>
 
+      {templates.length > 0 && (
+        <input
+          className="input max-w-sm"
+          type="search"
+          placeholder="Search by manufacturer or model…"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+      )}
+
       {error && <p className="text-sm text-red-400">{error}</p>}
 
       {templatesLoading && templates.length === 0 ? (
@@ -47,7 +62,7 @@ export function DashboardPage() {
       ) : (
         <TemplateGrid
           templates={myTemplates}
-          emptyMessage="No templates yet. Create one to get started."
+          emptyMessage={search ? 'No templates match your search.' : 'No templates yet. Create one to get started.'}
           onDelete={deleteTemplate}
         />
       )}

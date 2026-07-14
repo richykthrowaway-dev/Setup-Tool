@@ -3,6 +3,7 @@ import useImage from 'use-image'
 import type Konva from 'konva'
 import type { ControlObject } from '../../types/models'
 import { useContainerWidth } from '../../lib/useContainerWidth'
+import { pixelPointToNormalized } from '../../lib/coordinates'
 import { ControlShape } from './ControlShape'
 
 interface HardwareCanvasProps {
@@ -49,10 +50,7 @@ export function HardwareCanvas({
 
     const pointer = stage?.getPointerPosition()
     if (!pointer) return
-    onCanvasClick({
-      x: (pointer.x / stageWidth) * 100,
-      y: (pointer.y / stageHeight) * 100,
-    })
+    onCanvasClick(pixelPointToNormalized(pointer, stageWidth, stageHeight))
   }
 
   return (

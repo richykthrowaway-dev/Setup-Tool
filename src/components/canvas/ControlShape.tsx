@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 import { Circle, Ellipse, Group, Rect, Text, Transformer } from 'react-konva'
 import type Konva from 'konva'
 import type { ControlObject } from '../../types/models'
+import { controlToPixelCenter, pixelCenterToNormalizedPosition, pixelSizeToNormalizedSize } from '../../lib/coordinates'
 
 const MIN_SIZE_PERCENT = 1
 
@@ -36,10 +37,12 @@ export function ControlShape({
     }
   }, [isSelected, editable])
 
-  const pxWidth = (control.size.width / 100) * imagePixelWidth
-  const pxHeight = (control.size.height / 100) * imagePixelHeight
-  const centerX = (control.position.x / 100) * imagePixelWidth + pxWidth / 2
-  const centerY = (control.position.y / 100) * imagePixelHeight + pxHeight / 2
+  const { centerX, centerY, pxWidth, pxHeight } = controlToPixelCenter(
+    control.position,
+    control.size,
+    imagePixelWidth,
+    imagePixelHeight,
+  )
 
   const shapeProps = {
     fill: control.style.fill,
@@ -50,14 +53,15 @@ export function ControlShape({
 
   function handleDragEnd(e: Konva.KonvaEventObject<DragEvent>) {
     const node = e.target
-    const topLeftX = ((node.x() - pxWidth / 2) / imagePixelWidth) * 100
-    const topLeftY = ((node.y() - pxHeight / 2) / imagePixelHeight) * 100
-    onChange?.(control.id, {
-      position: {
-        x: clamp(topLeftX, 0, 100 - control.size.width),
-        y: clamp(topLeftY, 0, 100 - control.size.height),
-      },
+    const position = pixelCenterToNormalizedPosition({
+      centerX: node.x(),
+      centerY: node.y(),
+      pxWidth,
+      pxHeight,
+      imagePixelWidth,
+      imagePixelHeight,
     })
+    onChange?.(control.id, { position })
   }
 
   function handleTransformEnd() {
@@ -70,19 +74,17 @@ export function ControlShape({
 
     const newPxWidth = Math.max(pxWidth * scaleX, 4)
     const newPxHeight = Math.max(pxHeight * scaleY, 4)
-    const newWidthPct = Math.max((newPxWidth / imagePixelWidth) * 100, MIN_SIZE_PERCENT)
-    const newHeightPct = Math.max((newPxHeight / imagePixelHeight) * 100, MIN_SIZE_PERCENT)
-    const newTopLeftX = ((node.x() - newPxWidth / 2) / imagePixelWidth) * 100
-    const newTopLeftY = ((node.y() - newPxHeight / 2) / imagePixelHeight) * 100
-
-    onChange?.(control.id, {
-      size: { width: newWidthPct, height: newHeightPct },
-      position: {
-        x: clamp(newTopLeftX, 0, 100 - newWidthPct),
-        y: clamp(newTopLeftY, 0, 100 - newHeightPct),
-      },
-      rotation: node.rotation(),
+    const size = pixelSizeToNormalizedSize(newPxWidth, newPxHeight, imagePixelWidth, imagePixelHeight, MIN_SIZE_PERCENT)
+    const position = pixelCenterToNormalizedPosition({
+      centerX: node.x(),
+      centerY: node.y(),
+      pxWidth: newPxWidth,
+      pxHeight: newPxHeight,
+      imagePixelWidth,
+      imagePixelHeight,
     })
+
+    onChange?.(control.id, { size, position, rotation: node.rotation() })
   }
 
   return (
@@ -129,8 +131,4 @@ export function ControlShape({
       )}
     </>
   )
-}
-
-function clamp(value: number, min: number, max: number): number {
-  return Math.min(Math.max(value, min), Math.max(min, max))
 }

@@ -54,6 +54,9 @@ logic.
   vars are present — every call site is written against the interface, so no
   UI or store code changed when the backend was added.
 - `src/services/io` — portable JSON import/export for templates and profiles.
+- `src/lib/coordinates.ts` — pure normalized-%-to-pixel math (position,
+  size, drag, resize, click-to-place), extracted out of the canvas component
+  specifically so it's unit-testable without a DOM/canvas.
 - `src/components/canvas` — the reusable Konva-based canvas engine
   (`HardwareCanvas`, `ControlShape`) shared by both modes.
 - `src/components/creator` / `src/components/configurator` — mode-specific
@@ -81,6 +84,20 @@ npm run dev
 With no `.env.local`, the app runs in **local demo mode**: no login, data
 stored in the browser's localStorage, good for trying the editor or
 developing UI without touching the backend.
+
+## Testing
+
+```bash
+npm run test        # run once
+npm run test:watch  # watch mode
+```
+
+Vitest + jsdom. Coverage is on the parts that are pure logic and worth
+locking down: coordinate math (`coordinates.test.ts`), factories/forking
+(`factories.test.ts`), zod schema validation (`schema.test.ts`), the
+localStorage persistence adapter round-trip (`localStorageAdapter.test.ts`),
+and gallery search matching (`search.test.ts`). UI flows are covered by
+manual/scripted browser testing rather than component tests for now.
 
 ## Setting up the real backend (Supabase)
 
