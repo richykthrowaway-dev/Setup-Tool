@@ -7,6 +7,7 @@ import { GAME_FUNCTION_DATALIST_ID, getGameFunctionSuggestions } from '../../dat
 import { HardwareCanvas } from '../canvas/HardwareCanvas'
 import { BindingPanel } from './BindingPanel'
 import { BindingsTable } from './BindingsTable'
+import { BindingProgress } from './BindingProgress'
 import { Field } from '../shared/Field'
 import {
   exportUserProfile,
@@ -44,6 +45,7 @@ export function ConfiguratorView({ initialTemplateId, initialProfileId, initialV
 
   const [selectedTemplateId, setSelectedTemplateId] = useState(initialTemplateId ?? '')
   const [selectedControlId, setSelectedControlId] = useState<string | null>(null)
+  const [hoveredControlId, setHoveredControlId] = useState<string | null>(null)
   const [importError, setImportError] = useState<string | null>(null)
   const importInputRef = useRef<HTMLInputElement>(null)
 
@@ -186,6 +188,8 @@ export function ConfiguratorView({ initialTemplateId, initialProfileId, initialV
               />
             </div>
 
+            <BindingProgress controls={template.controls} profile={profile} />
+
             <div className="flex items-center gap-1 rounded-lg border border-slate-700 p-1 w-fit">
               <button
                 type="button"
@@ -233,6 +237,8 @@ export function ConfiguratorView({ initialTemplateId, initialProfileId, initialV
                     onSelectControl={setSelectedControlId}
                     isControlDimmed={(c) => !profile.bindings.some((b) => b.controlId === c.id)}
                     showNumbersOnly={true}
+                    hoveredControlId={hoveredControlId}
+                    getBindingForControl={(controlId) => profile.bindings.find((b) => b.controlId === controlId)}
                   />
                 </div>
                 <BindingsTable
@@ -243,6 +249,8 @@ export function ConfiguratorView({ initialTemplateId, initialProfileId, initialV
                   onSaveBinding={setBinding}
                   onClearBinding={removeBinding}
                   functionSuggestionsListId={GAME_FUNCTION_DATALIST_ID}
+                  hoveredControlId={hoveredControlId}
+                  onHoverControl={setHoveredControlId}
                 />
               </div>
             )}

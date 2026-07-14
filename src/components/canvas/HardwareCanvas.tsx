@@ -21,6 +21,8 @@ interface HardwareCanvasProps {
   isControlDimmed?: (control: ControlObject) => boolean
   /** If true, show only numbers on controls instead of shape overlays. Used in table view. */
   showNumbersOnly?: boolean
+  hoveredControlId?: string | null
+  getBindingForControl?: (controlId: string) => { assignedFunction: string } | undefined
 }
 
 export function HardwareCanvas({
@@ -35,6 +37,8 @@ export function HardwareCanvas({
   onCanvasClick,
   isControlDimmed,
   showNumbersOnly,
+  hoveredControlId,
+  getBindingForControl,
 }: HardwareCanvasProps) {
   const { ref, width } = useContainerWidth<HTMLDivElement>()
   const [image] = useImage(imageUrl)
@@ -77,21 +81,27 @@ export function HardwareCanvas({
             {image && (
               <KonvaImage name="canvas-background" image={image} width={stageWidth} height={stageHeight} />
             )}
-            {controls.map((control, index) => (
-              <ControlShape
-                key={control.id}
-                control={control}
-                imagePixelWidth={stageWidth}
-                imagePixelHeight={stageHeight}
-                isSelected={control.id === selectedControlId}
-                editable={editable}
-                dimmed={isControlDimmed?.(control)}
-                onSelect={onSelectControl}
-                onChange={onChangeControl}
-                showNumbersOnly={showNumbersOnly}
-                controlNumber={index + 1}
-              />
-            ))}
+            {controls.map((control, index) => {
+              const binding = getBindingForControl?.(control.id)
+              return (
+                <ControlShape
+                  key={control.id}
+                  control={control}
+                  imagePixelWidth={stageWidth}
+                  imagePixelHeight={stageHeight}
+                  isSelected={control.id === selectedControlId}
+                  editable={editable}
+                  dimmed={isControlDimmed?.(control)}
+                  onSelect={onSelectControl}
+                  onChange={onChangeControl}
+                  showNumbersOnly={showNumbersOnly}
+                  controlNumber={index + 1}
+                  isBound={!!binding}
+                  assignedFunction={binding?.assignedFunction}
+                  isHovered={control.id === hoveredControlId}
+                />
+              )
+            })}
           </Layer>
         </Stage>
       )}

@@ -21,6 +21,9 @@ interface ControlShapeProps {
   onChange?: (id: string, partial: Partial<ControlObject>) => void
   showNumbersOnly?: boolean
   controlNumber?: number
+  isBound?: boolean
+  assignedFunction?: string
+  isHovered?: boolean
 }
 
 export function ControlShape({
@@ -34,6 +37,9 @@ export function ControlShape({
   onChange,
   showNumbersOnly,
   controlNumber,
+  isBound,
+  assignedFunction,
+  isHovered,
 }: ControlShapeProps) {
   const groupRef = useRef<Konva.Group>(null)
   const transformerRef = useRef<Konva.Transformer>(null)
@@ -109,26 +115,64 @@ export function ControlShape({
 
   // If showing numbers only (table view companion), render a simple numbered circle
   if (showNumbersOnly && controlNumber) {
+    const circleRadius = (pxWidth + pxHeight) / 4
+    const baseColor = isBound ? '#06b6d4' : '#f97316' // cyan if bound, orange if unbound
+    const isHoveredOrSelected = isHovered || isSelected
+
     return (
-      <Group x={centerX} y={centerY} onClick={() => onSelect(control.id)} onTap={() => onSelect(control.id)}>
+      <Group
+        x={centerX}
+        y={centerY}
+        onClick={() => onSelect(control.id)}
+        onTap={() => onSelect(control.id)}
+        opacity={isHoveredOrSelected ? 1 : dimmed ? 0.6 : 0.85}
+        scaleX={isHoveredOrSelected ? 1.15 : 1}
+        scaleY={isHoveredOrSelected ? 1.15 : 1}
+      >
         <Circle
-          radius={(pxWidth + pxHeight) / 4}
-          fill="#06b6d4"
-          stroke={isSelected ? '#38bdf8' : '#0891b2'}
-          strokeWidth={2}
-          opacity={dimmed ? 0.5 : 1}
+          radius={circleRadius}
+          fill={baseColor}
+          stroke={isSelected ? '#38bdf8' : isHoveredOrSelected ? '#fff' : baseColor}
+          strokeWidth={isSelected ? 3 : isHoveredOrSelected ? 2.5 : 2}
+          opacity={0.9}
         />
         <Text
           text={controlNumber.toString()}
-          fontSize={18}
+          fontSize={16}
           fontStyle="700"
-          fill="#001f3f"
-          x={-15}
-          y={-11}
-          width={30}
+          fill="#fff"
+          x={-12}
+          y={-10}
+          width={24}
           align="center"
           verticalAlign="middle"
         />
+        {isBound && (
+          <Text
+            text="✓"
+            fontSize={12}
+            fontStyle="700"
+            fill="#22c55e"
+            x={circleRadius - 8}
+            y={-circleRadius + 4}
+            width={16}
+            align="center"
+            verticalAlign="middle"
+          />
+        )}
+        {!isBound && (
+          <Text
+            text="○"
+            fontSize={14}
+            fontStyle="700"
+            fill="#fff"
+            x={circleRadius - 8}
+            y={-circleRadius + 2}
+            width={16}
+            align="center"
+            verticalAlign="middle"
+          />
+        )}
       </Group>
     )
   }

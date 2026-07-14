@@ -19,6 +19,8 @@ interface BindingsTableProps {
   onSaveBinding: (params: { controlId: string; assignedFunction: string; notes?: string; category?: string }) => void
   onClearBinding: (controlId: string) => void
   functionSuggestionsListId?: string
+  hoveredControlId?: string | null
+  onHoverControl?: (id: string | null) => void
 }
 
 const SORTABLE_COLUMNS: { key: BindingSortKey; label: string; width: string }[] = [
@@ -41,6 +43,8 @@ export function BindingsTable({
   onSaveBinding,
   onClearBinding,
   functionSuggestionsListId,
+  hoveredControlId,
+  onHoverControl,
 }: BindingsTableProps) {
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<BindingStatusFilter>('all')
@@ -108,6 +112,13 @@ export function BindingsTable({
   }
 
   const boundCount = allRows.length - allRows.filter((r) => !r.binding).length
+  const unboundCount = allRows.filter((r) => !r.binding).length
+
+  const statusCounts = {
+    all: allRows.length,
+    bound: boundCount,
+    unbound: unboundCount,
+  }
 
   return (
     <div className="flex flex-col gap-3">
@@ -118,11 +129,14 @@ export function BindingsTable({
               key={tab.key}
               type="button"
               onClick={() => setStatusFilter(tab.key)}
-              className={`rounded-md px-3 py-1 text-sm font-medium transition ${
+              className={`inline-flex items-center gap-2 rounded-md px-3 py-1 text-sm font-medium transition ${
                 statusFilter === tab.key ? 'bg-cyan-500 text-slate-950' : 'text-slate-300 hover:text-white'
               }`}
             >
-              {tab.label}
+              <span>{tab.label}</span>
+              <span className="rounded-full bg-slate-700/50 px-2 py-0.5 text-xs font-semibold">
+                {statusCounts[tab.key as keyof typeof statusCounts]}
+              </span>
             </button>
           ))}
         </div>
@@ -180,34 +194,48 @@ export function BindingsTable({
           <tbody>
             {rows.map(({ control, binding }, i) => {
               const isSelected = control.id === selectedControlId
+              const isHovered = control.id === hoveredControlId
               return (
                 <tr
                   key={control.id}
                   onClick={() => onSelectControl(control.id)}
-                  className={`cursor-pointer border-b border-slate-800 border-l-4 last:border-b-0 ${
+                  onMouseEnter={() => onHoverControl?.(control.id)}
+                  onMouseLeave={() => onHoverControl?.(null)}
+                  className={`cursor-pointer border-b border-slate-800 border-l-4 last:border-b-0 transition-all duration-150 ${
                     isSelected
                       ? 'border-l-cyan-400 bg-cyan-500/10'
-                      : !binding
-                        ? 'border-l-amber-500/60 bg-amber-500/5 hover:bg-amber-500/10'
-                        : i % 2 === 0
-                          ? 'border-l-transparent hover:bg-slate-800/60'
-                          : 'border-l-transparent bg-slate-900/40 hover:bg-slate-800/60'
+                      : isHovered
+                        ? 'border-l-blue-400 bg-blue-500/20'
+                        : !binding
+                          ? 'border-l-amber-500/60 bg-amber-500/5 hover:bg-amber-500/10'
+                          : i % 2 === 0
+                            ? 'border-l-transparent hover:bg-slate-800/60'
+                            : 'border-l-transparent bg-slate-900/40 hover:bg-slate-800/60'
                   }`}
                 >
                   <td className="truncate px-3 py-2 align-top">
-                    <div className="truncate font-medium text-slate-100" title={control.label}>
-                      {labelDisplayMode === 'names'
-                        ? control.label
-                        : labelDisplayMode === 'numbers'
-                          ? (i + 1).toString()
-                          : binding?.assignedFunction || '—'}
-                    </div>
-                    <div className="text-xs text-slate-500">{CONTROL_TYPE_LABELS[control.type]}</div>
-                    {!binding && (
-                      <span className="mt-1 inline-block rounded-full bg-amber-500/20 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-amber-300">
-                        Unbound
+                    <div className="flex items-center gap-2">
+                      <span className="inline-flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-slate-700 text-xs font-bold text-slate-100">
+                        {i + 1}
                       </span>
-                    )}
+                      <div className="min-w-0 flex-1">
+                        <div className="truncate font-medium text-slate-100" title={control.label}>
+                          {control.label}
+                        </div>
+                        <div className="flex items-center gap-2 text-xs text-slate-500">
+                          <span>{CONTROL_TYPE_LABELS[control.type]}</span>
+                          {binding ? (
+                            <span className="inline-flex items-center gap-1 text-green-400">
+                              <span>✓</span>
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 text-amber-400">
+                              <span>○</span>
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
                   </td>
                   <td className="px-3 py-2 align-top" onClick={(e) => e.stopPropagation()}>
                     <input
