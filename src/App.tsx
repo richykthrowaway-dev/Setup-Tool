@@ -14,6 +14,9 @@ const CreatorPage = lazy(() => import('./pages/CreatorPage').then((m) => ({ defa
 const ConfiguratorPage = lazy(() =>
   import('./pages/ConfiguratorPage').then((m) => ({ default: m.ConfiguratorPage })),
 )
+const PrintCheatSheetPage = lazy(() =>
+  import('./pages/PrintCheatSheetPage').then((m) => ({ default: m.PrintCheatSheetPage })),
+)
 
 function PageLoading() {
   return <div className="py-16 text-center text-sm text-slate-400">Loading…</div>
@@ -53,6 +56,18 @@ function App() {
           </Route>
 
           <Route path="*" element={<Navigate to="/" replace />} />
+        </Route>
+
+        {/* Deliberately outside AppShell — no header/nav to hide when printing. */}
+        <Route element={<ProtectedRoute />}>
+          <Route
+            path="/print/:templateId"
+            element={
+              <Suspense fallback={<PageLoading />}>
+                <PrintCheatSheetPage />
+              </Suspense>
+            }
+          />
         </Route>
       </Routes>
     </BrowserRouter>

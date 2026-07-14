@@ -2,8 +2,10 @@ import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useLibraryStore } from '../../store/libraryStore'
 import { useProfileStore } from '../../store/profileStore'
+import { useUiPreferencesStore } from '../../store/uiPreferencesStore'
 import { HardwareCanvas } from '../canvas/HardwareCanvas'
 import { BindingPanel } from './BindingPanel'
+import { BindingsTable } from './BindingsTable'
 import { Field } from '../shared/Field'
 import {
   exportUserProfile,
@@ -33,6 +35,9 @@ export function ConfiguratorView({ initialTemplateId, initialProfileId }: Config
   const removeBinding = useProfileStore((s) => s.removeBinding)
   const saveProfile = useProfileStore((s) => s.saveProfile)
   const saveError = useProfileStore((s) => s.saveError)
+
+  const viewMode = useUiPreferencesStore((s) => s.configuratorViewMode)
+  const setViewMode = useUiPreferencesStore((s) => s.setConfiguratorViewMode)
 
   const [selectedTemplateId, setSelectedTemplateId] = useState(initialTemplateId ?? '')
   const [selectedControlId, setSelectedControlId] = useState<string | null>(null)
@@ -166,18 +171,50 @@ export function ConfiguratorView({ initialTemplateId, initialProfileId }: Config
               />
             </div>
 
-            <div className="overflow-hidden rounded-lg border border-slate-700 bg-slate-900">
-              <HardwareCanvas
-                imageUrl={template.imageUrl}
-                imageWidth={template.imageWidth}
-                imageHeight={template.imageHeight}
-                controls={template.controls}
-                selectedControlId={selectedControlId}
-                editable={false}
-                onSelectControl={setSelectedControlId}
-                isControlDimmed={(c) => !profile.bindings.some((b) => b.controlId === c.id)}
-              />
+            <div className="flex items-center gap-1 rounded-lg border border-slate-700 p-1 w-fit">
+              <button
+                type="button"
+                onClick={() => setViewMode('canvas')}
+                className={`rounded-md px-3 py-1.5 text-sm font-medium transition ${
+                  viewMode === 'canvas' ? 'bg-cyan-500 text-slate-950' : 'text-slate-300 hover:text-white'
+                }`}
+              >
+                Canvas
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode('table')}
+                className={`rounded-md px-3 py-1.5 text-sm font-medium transition ${
+                  viewMode === 'table' ? 'bg-cyan-500 text-slate-950' : 'text-slate-300 hover:text-white'
+                }`}
+              >
+                Table
+              </button>
             </div>
+
+            {viewMode === 'canvas' ? (
+              <div className="overflow-hidden rounded-lg border border-slate-700 bg-slate-900">
+                <HardwareCanvas
+                  imageUrl={template.imageUrl}
+                  imageWidth={template.imageWidth}
+                  imageHeight={template.imageHeight}
+                  controls={template.controls}
+                  selectedControlId={selectedControlId}
+                  editable={false}
+                  onSelectControl={setSelectedControlId}
+                  isControlDimmed={(c) => !profile.bindings.some((b) => b.controlId === c.id)}
+                />
+              </div>
+            ) : (
+              <BindingsTable
+                controls={template.controls}
+                profile={profile}
+                selectedControlId={selectedControlId}
+                onSelectControl={setSelectedControlId}
+                onSaveBinding={setBinding}
+                onClearBinding={removeBinding}
+              />
+            )}
 
             <div className="flex flex-wrap items-center gap-3">
               <button
@@ -201,6 +238,14 @@ export function ConfiguratorView({ initialTemplateId, initialProfileId }: Config
               >
                 Import JSON
               </button>
+              <Link
+                to={`/print/${template.id}?profile=${profile.id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-md border border-slate-600 px-4 py-2 text-sm text-slate-200 hover:border-slate-400"
+              >
+                Print cheat sheet
+              </Link>
               <span className="text-xs text-slate-500">
                 {profile.bindings.length} / {template.controls.length} bound
               </span>
