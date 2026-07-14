@@ -14,9 +14,11 @@ import {
 interface ConfiguratorViewProps {
   /** Preselects the hardware template, e.g. when arriving from a dashboard "Configure" link. */
   initialTemplateId?: string
+  /** Preselects a specific profile once it's loaded, e.g. from a "Your profiles" deep link. */
+  initialProfileId?: string
 }
 
-export function ConfiguratorView({ initialTemplateId }: ConfiguratorViewProps) {
+export function ConfiguratorView({ initialTemplateId, initialProfileId }: ConfiguratorViewProps) {
   const templates = useLibraryStore((s) => s.templates)
   const refreshTemplates = useLibraryStore((s) => s.refreshTemplates)
   const profiles = useLibraryStore((s) => s.profiles)
@@ -51,6 +53,12 @@ export function ConfiguratorView({ initialTemplateId }: ConfiguratorViewProps) {
 
   const template = templates.find((t) => t.id === selectedTemplateId) ?? null
   const templateProfiles = profiles.filter((p) => p.hardwareTemplateId === selectedTemplateId)
+
+  useEffect(() => {
+    if (!initialProfileId || profile) return
+    const found = templateProfiles.find((p) => p.id === initialProfileId)
+    if (found) loadProfile(found)
+  }, [initialProfileId, templateProfiles, profile, loadProfile])
   const selectedControl = template?.controls.find((c) => c.id === selectedControlId) ?? null
   const selectedBinding = profile?.bindings.find((b) => b.controlId === selectedControlId)
 

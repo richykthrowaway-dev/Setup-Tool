@@ -71,6 +71,21 @@ export function createHardwareTemplate(params: {
   }
 }
 
+/** Copies a (typically public, other-owned) template into a new one the caller owns. */
+export function forkHardwareTemplate(source: HardwareTemplate): HardwareTemplate {
+  const now = new Date().toISOString()
+  return {
+    ...source,
+    id: generateId(),
+    controls: source.controls.map((control) => ({ ...control })),
+    version: 1,
+    isPublic: false,
+    creatorId: undefined,
+    createdAt: now,
+    updatedAt: now,
+  }
+}
+
 export function createUserProfile(params: {
   hardwareTemplateId: string
   name: string

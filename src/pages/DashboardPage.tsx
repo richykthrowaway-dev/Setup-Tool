@@ -3,18 +3,25 @@ import { Link } from 'react-router-dom'
 import { isSupabaseConfigured } from '../lib/config'
 import { useAuthStore } from '../store/authStore'
 import { useLibraryStore } from '../store/libraryStore'
-import type { HardwareTemplate } from '../types/models'
+import type { HardwareTemplate, UserProfile } from '../types/models'
 
 export function DashboardPage() {
   const templates = useLibraryStore((s) => s.templates)
+  const profiles = useLibraryStore((s) => s.profiles)
+  const templatesLoading = useLibraryStore((s) => s.templatesLoading)
+  const profilesLoading = useLibraryStore((s) => s.profilesLoading)
   const error = useLibraryStore((s) => s.error)
   const refreshTemplates = useLibraryStore((s) => s.refreshTemplates)
+  const refreshProfiles = useLibraryStore((s) => s.refreshProfiles)
   const deleteTemplate = useLibraryStore((s) => s.deleteTemplate)
+  const deleteProfile = useLibraryStore((s) => s.deleteProfile)
+  const forkTemplate = useLibraryStore((s) => s.forkTemplate)
   const user = useAuthStore((s) => s.user)
 
   useEffect(() => {
     refreshTemplates()
-  }, [refreshTemplates])
+    refreshProfiles()
+  }, [refreshTemplates, refreshProfiles])
 
   const myTemplates = isSupabaseConfigured ? templates.filter((t) => t.creatorId === user?.id) : templates
   const publicTemplates = isSupabaseConfigured
@@ -35,18 +42,31 @@ export function DashboardPage() {
 
       {error && <p className="text-sm text-red-400">{error}</p>}
 
-      <TemplateGrid
-        templates={myTemplates}
-        emptyMessage="No templates yet. Create one to get started."
-        onDelete={deleteTemplate}
-      />
+      {templatesLoading && templates.length === 0 ? (
+        <p className="text-sm text-slate-400">Loading templates…</p>
+      ) : (
+        <TemplateGrid
+          templates={myTemplates}
+          emptyMessage="No templates yet. Create one to get started."
+          onDelete={deleteTemplate}
+        />
+      )}
 
       {isSupabaseConfigured && publicTemplates.length > 0 && (
         <div>
           <h2 className="mb-4 text-lg font-semibold text-slate-200">Community templates</h2>
-          <TemplateGrid templates={publicTemplates} emptyMessage="" />
+          <TemplateGrid templates={publicTemplates} emptyMessage="" onFork={forkTemplate} />
         </div>
       )}
+
+      <div>
+        <h2 className="mb-4 text-lg font-semibold text-slate-200">Your profiles</h2>
+        {profilesLoading && profiles.length === 0 ? (
+          <p className="text-sm text-slate-400">Loading profiles…</p>
+        ) : (
+          <ProfileList profiles={profiles} templates={templates} onDelete={deleteProfile} />
+        )}
+      </div>
     </div>
   )
 }
@@ -55,10 +75,12 @@ function TemplateGrid({
   templates,
   emptyMessage,
   onDelete,
+  onFork,
 }: {
   templates: HardwareTemplate[]
   emptyMessage: string
   onDelete?: (id: string) => void
+  onFork?: (template: HardwareTemplate) => void
 }) {
   if (templates.length === 0) {
     return emptyMessage ? <p className="text-sm text-slate-400">{emptyMessage}</p> : null
@@ -83,22 +105,33 @@ function TemplateGrid({
               </div>
             </div>
             <div className="mt-auto flex items-center gap-2 pt-2 text-sm">
-              <Link
-                to={`/creator/${template.id}`}
-                className="rounded-md border border-slate-600 px-3 py-1.5 text-slate-200 hover:border-slate-400"
-              >
-                Edit
-              </Link>
+              {onDelete && (
+                <Link
+                  to={`/creator/${template.id}`}
+                  className="rounded-md border border-slate-600 px-3 py-1.5 text-slate-200 hover:border-slate-400"
+                >
+                  Edit
+                </Link>
+              )}
               <Link
                 to={`/configure/${template.id}`}
                 className="rounded-md border border-slate-600 px-3 py-1.5 text-slate-200 hover:border-slate-400"
               >
                 Configure
               </Link>
+              {onFork && (
+                <button
+                  type="button"
+                  onClick={() => onFork(template)}
+                  className="rounded-md border border-slate-600 px-3 py-1.5 text-slate-200 hover:border-slate-400"
+                >
+                  Fork
+                </button>
+              )}
               {onDelete && (
                 <button
                   type="button"
-                  onClick={() => confirmAndDelete(onDelete, template.id)}
+                  onClick={() => confirmAndRun(onDelete, template.id, 'Delete this template? This cannot be undone.')}
                   className="ml-auto text-red-400 hover:text-red-300"
                 >
                   Delete
@@ -112,6 +145,58 @@ function TemplateGrid({
   )
 }
 
-function confirmAndDelete(onDelete: (id: string) => void, id: string) {
-  if (confirm('Delete this template? This cannot be undone.')) onDelete(id)
+function ProfileList({
+  profiles,
+  templates,
+  onDelete,
+}: {
+  profiles: UserProfile[]
+  templates: HardwareTemplate[]
+  onDelete: (id: string) => void
+}) {
+  if (profiles.length === 0) {
+    return <p className="text-sm text-slate-400">No profiles yet. Configure a template to create one.</p>
+  }
+
+  return (
+    <div className="flex flex-col divide-y divide-slate-800 rounded-lg border border-slate-700 bg-slate-900">
+      {profiles.map((profile) => {
+        const template = templates.find((t) => t.id === profile.hardwareTemplateId)
+        return (
+          <div key={profile.id} className="flex flex-wrap items-center justify-between gap-3 p-4">
+            <div>
+              <div className="font-medium text-slate-100">{profile.name || 'Untitled profile'}</div>
+              <div className="text-xs text-slate-500">
+                {template ? `${template.meta.manufacturer} ${template.meta.model}` : 'Unknown template'}
+                {profile.game ? ` · ${profile.game}` : ''}
+                {' · '}
+                {profile.bindings.length} binding{profile.bindings.length === 1 ? '' : 's'}
+              </div>
+            </div>
+            <div className="flex items-center gap-2 text-sm">
+              {template && (
+                <Link
+                  to={`/configure/${template.id}?profile=${profile.id}`}
+                  className="rounded-md border border-slate-600 px-3 py-1.5 text-slate-200 hover:border-slate-400"
+                >
+                  Open
+                </Link>
+              )}
+              <button
+                type="button"
+                onClick={() => confirmAndRun(onDelete, profile.id, 'Delete this profile? This cannot be undone.')}
+                className="text-red-400 hover:text-red-300"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+function confirmAndRun(action: (id: string) => void, id: string, message: string) {
+  if (confirm(message)) action(id)
 }
